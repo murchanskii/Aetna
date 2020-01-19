@@ -13,7 +13,7 @@ public:
     explicit Renderer(GLFWwindow* t_window) {};
     virtual ~Renderer() = default;
 
-    virtual void init() = 0;
+    virtual void initialize() = 0;
     virtual void update() = 0;
     virtual void render() = 0;
     virtual void terminate() = 0;

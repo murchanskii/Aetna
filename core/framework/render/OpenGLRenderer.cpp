@@ -8,7 +8,7 @@
 
 OpenGLRenderer::OpenGLRenderer(GLFWwindow *t_window) : Renderer(t_window) {
     m_main_window = t_window;
-    init();
+    initialize();
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
@@ -20,7 +20,7 @@ bool OpenGLRenderer::isInitialized() {
     return m_initialized;
 }
 
-void OpenGLRenderer::init() {
+void OpenGLRenderer::initialize() {
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         std::cout << "Failed to init glad" << std::endl;
         glfwTerminate();
