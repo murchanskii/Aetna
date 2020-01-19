@@ -2,8 +2,8 @@
 // Created by murchanskii on 27.10.2019.
 //
 
-#ifndef AETNA2D_MESH_H
-#define AETNA2D_MESH_H
+#ifndef AETNA_MESH_H
+#define AETNA_MESH_H
 
 #include <vector>
 #include <glm/glm.hpp>
@@ -30,4 +30,4 @@ private:
 };
 
 
-#endif //AETNA2D_MESH_H
+#endif //AETNA_MESH_H

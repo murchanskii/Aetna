@@ -14,22 +14,16 @@ Engine::Engine() {
 }
 
 Engine::~Engine() {
-    delete m_renderer;
-    //delete m_main_window;
+
 }
 
-void Engine::init(int argc, char **argv) {
+void Engine::initialize(int argc, char **argv) {
     if (isInitialized()) {
         return;
     }
 
     if (process_args(argc, argv) == -1) {
         return;
-    }
-
-    if (!glfwInit()) {
-        std::cout << "Failed to init GLFW" << std::endl;
-        exit(EXIT_FAILURE);
     }
 
     if (window_width == 0) {
@@ -41,24 +35,17 @@ void Engine::init(int argc, char **argv) {
     if (window_title.empty()) {
         window_title = "Aetna";
     }
-    m_main_window = glfwCreateWindow(window_width, window_height,
-                                          window_title.c_str(), nullptr, nullptr);
-    if (m_main_window == nullptr) {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-    glfwMakeContextCurrent(m_main_window);
 
     switch(renderer_type) {
         case RendererType::OPENGL:
-            m_renderer = new OpenGLRenderer(m_main_window);
+            m_renderer = OpenGLRenderer::get();
             break;
         case RendererType::DIRECT3D:
             std::cerr << "Direct3D renderer is not currently implemented, use --renderer GL instead" << std::endl;
             return;
     }
 
+    m_renderer->initialize(window_width, window_height, window_title.c_str());
     m_is_initialized = true;
 }
 
@@ -75,11 +62,15 @@ void Engine::update() {
 }
 
 void Engine::terminate() {
+    if (!isInitialized()) {
+        return;
+    }
+
     for (Script *script : m_scripts) {
         script->terminate();
     }
 
-    glfwTerminate();
+    m_renderer->terminate();
 }
 
 void Engine::run() {
@@ -87,13 +78,11 @@ void Engine::run() {
         return;
     }
 
-    while (!glfwWindowShouldClose(m_main_window)) {
+    while (m_renderer->mainWindowIsOpen()) {
         update();
-        glfwPollEvents();
-        glfwSwapBuffers(m_main_window);
+        m_renderer->swap();
     }
 
-    m_renderer->terminate();
     terminate();
 }
 
@@ -102,11 +91,19 @@ bool Engine::isInitialized() {
 }
 
 void Engine::addScript(Script *script) {
+    if (!isInitialized()) {
+        return;
+    }
+
     m_scripts.push_back(script);
     script->initialize();
 }
 
 void Engine::removeScript(Script *script) {
+    if (!isInitialized()) {
+        return;
+    }
+
     script->terminate();
     m_scripts.erase(std::find(m_scripts.begin(), m_scripts.end(), script));
 }
@@ -114,7 +111,7 @@ void Engine::removeScript(Script *script) {
 int Engine::process_args(int argc, char **argv) {
     if (argc < 2) {
         std::cerr << "usage: " << argv[0] <<
-        " [-r | --renderer <option: GL / D3D>]" << std::endl;
+        " <-r | --renderer <option: GL / D3D> >" << std::endl;
         return -1;
     }
 

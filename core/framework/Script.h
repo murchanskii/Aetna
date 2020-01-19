@@ -2,8 +2,8 @@
 // Created by Candles on 19.01.2020.
 //
 
-#ifndef AETNA2D_SCRIPT_H
-#define AETNA2D_SCRIPT_H
+#ifndef AETNA_SCRIPT_H
+#define AETNA_SCRIPT_H
 
 
 class Script {
@@ -18,4 +18,4 @@ public:
 };
 
 
-#endif //AETNA2D_SCRIPT_H
+#endif //AETNA_SCRIPT_H

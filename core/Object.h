@@ -2,8 +2,8 @@
 // Created by murchanskii on 27.10.2019.
 //
 
-#ifndef AETNA2D_OBJECT_H
-#define AETNA2D_OBJECT_H
+#ifndef AETNA_OBJECT_H
+#define AETNA_OBJECT_H
 
 #include <glm/glm.hpp>
 #include "Mesh.h"
@@ -24,4 +24,4 @@ private:
 };
 
 
-#endif //AETNA2D_OBJECT_H
+#endif //AETNA_OBJECT_H

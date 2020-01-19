@@ -2,8 +2,8 @@
 // Created by murchanskii on 27.10.2019.
 //
 
-#ifndef AETNA2D_ENGINE_H
-#define AETNA2D_ENGINE_H
+#ifndef AETNA_ENGINE_H
+#define AETNA_ENGINE_H
 
 #include "Script.h"
 #include "render/Renderer.h"
@@ -22,7 +22,7 @@ public:
     Engine(Engine const&) = delete;
     Engine& operator=(Engine const&) = delete;
 
-    void init(int argc, char **argv);
+    void initialize(int argc, char **argv);
     void run();
     void addScript(Script *script);
     void removeScript(Script *script);
@@ -41,7 +41,6 @@ private:
         DIRECT3D
     } renderer_type = RendererType::OPENGL;
 
-    GLFWwindow *m_main_window;
     int window_width = 0;
     int window_height = 0;
     std::string window_title;
@@ -55,4 +54,4 @@ private:
 };
 
 
-#endif //AETNA2D_ENGINE_H
+#endif //AETNA_ENGINE_H

@@ -2,21 +2,37 @@
 // Created by murchanskii on 27.10.2019.
 //
 
-#ifndef AETNA2D_RENDERER_H
-#define AETNA2D_RENDERER_H
+#ifndef AETNA_RENDERER_H
+#define AETNA_RENDERER_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <stdexcept>
 
 class Renderer {
 public:
-    explicit Renderer(GLFWwindow* t_window) {};
-    virtual ~Renderer() = default;
+    static Renderer *get() { return nullptr; }
 
-    virtual void initialize() = 0;
+    Renderer(Renderer const&) = delete;
+    Renderer& operator=(Renderer const&) = delete;
+
+    bool isInitialized() {
+        return m_is_initialized;
+    }
+
+    virtual bool mainWindowIsOpen() = 0;
+
+    virtual void initialize(int window_w, int window_h, const char *window_t) = 0;
     virtual void update() = 0;
     virtual void render() = 0;
     virtual void terminate() = 0;
-};
+    virtual void swap() = 0;
 
-#endif //AETNA2D_RENDERER_H
+protected:
+    Renderer() {}
+    virtual ~Renderer()  {}
+
+private:
+    bool m_is_initialized = false;
+};
+//Renderer *Renderer::instance = nullptr;
+
+#endif //AETNA_RENDERER_H

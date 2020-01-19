@@ -10,11 +10,11 @@ void MainScript::initialize() {
 }
 
 void MainScript::update() {
-    std::cout << "mainscript is updated" << std::endl;
+    //std::cout << "mainscript is updated" << std::endl;
 }
 
 void MainScript::render() {
-    std::cout << "mainscript is rendered" << std::endl;
+    //std::cout << "mainscript is rendered" << std::endl;
 }
 
 void MainScript::terminate() {

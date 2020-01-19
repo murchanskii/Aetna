@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     Engine *engine_ptr = Engine::get();
-    engine_ptr->init(argc, argv);
+    engine_ptr->initialize(argc, argv);
 
     MainScript main_script;
     engine_ptr->addScript(&main_script);
