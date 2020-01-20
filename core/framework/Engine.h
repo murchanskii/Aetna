@@ -28,6 +28,7 @@ public:
     void removeScript(Script *script);
 
     bool isInitialized();
+    Renderer *getRenderer();
 
 private:
     Engine();

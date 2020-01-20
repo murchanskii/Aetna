@@ -3,6 +3,7 @@
 //
 
 #include "Engine.h"
+#include "Game.h"
 #include "render/OpenGLRenderer.h"
 
 #include <iostream>
@@ -50,15 +51,17 @@ void Engine::initialize(int argc, char **argv) {
 }
 
 void Engine::update() {
-    m_renderer->update();
     for (Script *script : m_scripts) {
         script->update();
     }
+    Game::get()->update();
+    m_renderer->update();
 
-    m_renderer->render();
     for (Script *script : m_scripts) {
         script->render();
     }
+    Game::get()->render();
+    m_renderer->render();
 }
 
 void Engine::terminate() {
@@ -202,4 +205,8 @@ int Engine::process_args(int argc, char **argv) {
         }
     }
     return 1;
+}
+
+Renderer *Engine::getRenderer() {
+    return m_renderer;
 }

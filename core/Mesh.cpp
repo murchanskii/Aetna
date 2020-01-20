@@ -4,11 +4,11 @@
 
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<glm::vec3> t_vertices, std::vector<int> t_indices) {
+Mesh::Mesh(std::vector<float> t_vertices, std::vector<int> t_indices) {
     setVertices(t_vertices, t_indices);
 }
 
-Mesh::Mesh(std::vector<glm::vec3> t_vertices, std::vector<int> t_indices, std::vector<glm::vec3> t_normals) {
+Mesh::Mesh(std::vector<float> t_vertices, std::vector<int> t_indices, std::vector<float> t_normals) {
     m_vertices = t_vertices;
     m_indices = t_indices;
     m_normals = t_normals;
@@ -18,7 +18,7 @@ Mesh::~Mesh() {
 
 }
 
-void Mesh::setVertices(std::vector<glm::vec3> t_vertices, std::vector<int> t_indices) {
+void Mesh::setVertices(std::vector<float> t_vertices, std::vector<int> t_indices) {
     m_vertices = t_vertices;
     m_indices = t_indices;
 
@@ -27,11 +27,11 @@ void Mesh::setVertices(std::vector<glm::vec3> t_vertices, std::vector<int> t_ind
     }
 }
 
-void Mesh::setNormals(std::vector<glm::vec3> t_normals) {
+void Mesh::setNormals(std::vector<float> t_normals) {
     m_normals = t_normals;
 }
 
-void Mesh::generate_normals(std::vector<glm::vec3> &t_normals) {
+void Mesh::generate_normals(std::vector<float> &t_normals) {
     auto get_surface_normal = [](const glm::vec3 &p1,
                                        const glm::vec3 &p2,
                                        const glm::vec3 &p3){
@@ -45,12 +45,20 @@ void Mesh::generate_normals(std::vector<glm::vec3> &t_normals) {
     };
 
     if (m_indices.empty()) {
-        for (int i = 0; i < m_vertices.size(); i += 3) {
+        for (int i = 0; i < m_vertices.size(); i += 9) {
             glm::vec3 normal(1.0f), p1, p2, p3;
 
-            p1 = m_vertices[i];
-            p2 = m_vertices[i + 1];
-            p3 = m_vertices[i + 2];
+            p1[0] = m_vertices[i + 0];
+            p1[1] = m_vertices[i + 1];
+            p1[2] = m_vertices[i + 2];
+
+            p2[0] = m_vertices[i + 3];
+            p2[1] = m_vertices[i + 4];
+            p2[2] = m_vertices[i + 5];
+
+            p3[0] = m_vertices[i + 6];
+            p3[1] = m_vertices[i + 7];
+            p3[2] = m_vertices[i + 8];
 
             normal = get_surface_normal(p1, p2, p3);
             for (int j = 0; j < 3; ++j) {
@@ -61,12 +69,20 @@ void Mesh::generate_normals(std::vector<glm::vec3> &t_normals) {
         }
     }
     else {
-        for (int i = 0; i < m_indices.size(); i += 3) {
+        for (int i = 0; i < m_indices.size(); i += 9) {
             glm::vec3 normal(1.0f), p1, p2, p3;
 
-            p1 = m_vertices[m_indices[i]];
-            p2 = m_vertices[m_indices[i + 1]];
-            p3 = m_vertices[m_indices[i + 2]];
+            p1[0] = m_vertices[m_indices[i + 0]];
+            p1[1] = m_vertices[m_indices[i + 1]];
+            p1[2] = m_vertices[m_indices[i + 2]];
+
+            p2[0] = m_vertices[m_indices[i + 3]];
+            p2[1] = m_vertices[m_indices[i + 4]];
+            p2[2] = m_vertices[m_indices[i + 5]];
+
+            p3[0] = m_vertices[m_indices[i + 6]];
+            p3[1] = m_vertices[m_indices[i + 7]];
+            p3[2] = m_vertices[m_indices[i + 8]];
 
             normal = get_surface_normal(p1, p2, p3);
             for (int j = 0; j < 3; ++j) {
@@ -76,5 +92,17 @@ void Mesh::generate_normals(std::vector<glm::vec3> &t_normals) {
             }
         }
     }
+}
+
+std::vector<float> Mesh::getVertices() {
+    return m_vertices;
+}
+
+std::vector<int> Mesh::getIndices() {
+    return m_indices;
+}
+
+std::vector<float> Mesh::getNormals() {
+    return m_normals;
 }
 

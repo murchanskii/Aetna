@@ -8,6 +8,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Renderer.h"
+#include "../shader/OpenGLShaderProgram.h"
+
+#include <vector>
 
 class OpenGLRenderer : public Renderer {
 public:
@@ -20,10 +23,22 @@ public:
     void update() override;
     void render() override;
     void terminate() override;
+    void swap() override;
 
     bool mainWindowIsOpen() override;
 
-    void swap() override;
+protected:
+    struct OpenGLObject {
+        Object *scene_object;
+
+        OpenGLShaderProgram *shader_program;
+        GLuint VAO;
+        std::vector<GLuint> vec_VBOs;
+    };
+
+    void addObjectToRender(Object *obj) override;
+    void removeObjectFromRender(Object *obj) override;
+    void renderObjects() override;
 
 private:
     OpenGLRenderer();
@@ -31,7 +46,8 @@ private:
 
     bool m_initialized;
 
-    GLFWwindow *m_main_window;
+    GLFWwindow *m_main_window = nullptr;
+    std::vector<OpenGLObject*> m_vec_gl_objects;
 };
 
 

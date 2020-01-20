@@ -10,23 +10,27 @@
 
 class Mesh {
 public:
-    explicit Mesh(std::vector<glm::vec3> t_vertices,
+    explicit Mesh(std::vector<float> t_vertices,
         std::vector<int> t_indices = std::vector<int>());
-    Mesh(std::vector<glm::vec3> t_vertices,
+    Mesh(std::vector<float> t_vertices,
                   std::vector<int> t_indices,
-                  std::vector<glm::vec3> t_normals);
+                  std::vector<float> t_normals);
     ~Mesh();
 
-    void setVertices(std::vector<glm::vec3> t_vertices,
+    void setVertices(std::vector<float> t_vertices,
             std::vector<int> t_indices = std::vector<int>());
-    void setNormals(std::vector<glm::vec3> t_normals);
+    void setNormals(std::vector<float> t_normals);
+
+    std::vector<float> getVertices();
+    std::vector<int> getIndices();
+    std::vector<float> getNormals();
 
 private:
-    std::vector<glm::vec3> m_vertices;
+    std::vector<float> m_vertices;
     std::vector<int> m_indices;
-    std::vector<glm::vec3> m_normals;
+    std::vector<float> m_normals;
 
-    void generate_normals(std::vector<glm::vec3> &t_normals);
+    void generate_normals(std::vector<float> &t_normals);
 };
 
 

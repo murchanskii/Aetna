@@ -5,12 +5,11 @@
 #ifndef AETNA_RENDERER_H
 #define AETNA_RENDERER_H
 
-#include <stdexcept>
+#include "../Game.h"
+#include "../../Object.h"
 
 class Renderer {
 public:
-    static Renderer *get() { return nullptr; }
-
     Renderer(Renderer const&) = delete;
     Renderer& operator=(Renderer const&) = delete;
 
@@ -27,8 +26,17 @@ public:
     virtual void swap() = 0;
 
 protected:
+    friend void Game::addObjectToScene(Object *obj);
+    friend void Game::removeObjectFromScene(Object *obj);
+    friend void Game::removeObjectFromScene(int num);
+    friend void Game::render();
+
     Renderer() {}
     virtual ~Renderer()  {}
+
+    virtual void addObjectToRender(Object *obj) = 0;
+    virtual void removeObjectFromRender(Object *obj) = 0;
+    virtual void renderObjects() = 0;
 
 private:
     bool m_is_initialized = false;

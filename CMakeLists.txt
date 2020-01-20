@@ -20,6 +20,6 @@ add_executable(Aetna
         core/framework/render/OpenGLRenderer.cpp
         core/framework/render/OpenGLRenderer.h
         core/framework/Engine.cpp
-        core/framework/Engine.h core/framework/Script.h MainScript.cpp MainScript.h)
+        core/framework/Engine.h core/framework/Script.h MainScript.cpp MainScript.h core/framework/Game.cpp core/framework/Game.h core/framework/shader/ShaderProgram.h core/framework/shader/OpenGLShaderProgram.cpp core/framework/shader/OpenGLShaderProgram.h)
 
 target_link_libraries(Aetna SOIL ${OPENGL_gl_LIBRARY} glfw3 "-static")
