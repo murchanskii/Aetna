@@ -1,13 +1,22 @@
 # cmake_minimum_required(VERSION <specify CMake version here>)
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.8)
 project(Aetna)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(OpenGL REQUIRED)
+include_directories(${CMAKE_SOURCE_DIR}/Aetna/dependencies/glad/include 
+                    ${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/include 
+                    ${CMAKE_SOURCE_DIR}/Aetna/dependencies/glm/include
+                    ${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/include)
+                    
+add_library(glfw3 SHARED IMPORTED)
+set_property(TARGET glfw3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/include")
+set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/lib/vs2019/glfw3.dll")
+set_property(TARGET glfw3 PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/lib/vs2019/glfw3dll.lib")
 
-include_directories(dependencies/glad/include dependencies/GLFW/include dependencies/glm dependencies/SOIL/include)
-link_directories(dependencies/SOIL/lib dependencies/GLFW/lib)
+#add_library(SOIL STATIC IMPORTED)
+#set_property(TARGET SOIL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/include")
+#set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/lib/SOIL.lib")
 
 add_executable(Aetna
         dependencies/glad/src/glad.c
@@ -20,6 +29,14 @@ add_executable(Aetna
         core/framework/render/OpenGLRenderer.cpp
         core/framework/render/OpenGLRenderer.h
         core/framework/Engine.cpp
-        core/framework/Engine.h core/framework/Script.h MainScript.cpp MainScript.h core/framework/Game.cpp core/framework/Game.h core/framework/shader/ShaderProgram.h core/framework/shader/OpenGLShaderProgram.cpp core/framework/shader/OpenGLShaderProgram.h)
+        core/framework/Engine.h 
+		core/framework/Script.h 
+		MainScript.cpp 
+		MainScript.h 
+		core/framework/Game.cpp 
+		core/framework/Game.h
+		core/framework/shader/ShaderProgram.h
+		core/framework/shader/OpenGLShaderProgram.cpp 
+		core/framework/shader/OpenGLShaderProgram.h)
 
-target_link_libraries(Aetna SOIL ${OPENGL_gl_LIBRARY} glfw3 "-static")
+target_link_libraries(Aetna glfw3)
