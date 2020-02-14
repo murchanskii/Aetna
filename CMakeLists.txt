@@ -4,15 +4,22 @@ project(Aetna)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(${CMAKE_SOURCE_DIR}/Aetna/dependencies/glad/include 
-                    ${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/include 
-                    ${CMAKE_SOURCE_DIR}/Aetna/dependencies/glm/include
-                    ${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/include)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/glad/include
+                    ${CMAKE_SOURCE_DIR}/dependencies/GLFW/include
+                    ${CMAKE_SOURCE_DIR}/dependencies/glm/include
+                    ${CMAKE_SOURCE_DIR}/dependencies/SOIL/include)
                     
 add_library(glfw3 SHARED IMPORTED)
-set_property(TARGET glfw3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/include")
-set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/lib/vs2019/glfw3.dll")
-set_property(TARGET glfw3 PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/Aetna/dependencies/GLFW/lib/vs2019/glfw3dll.lib")
+set_property(TARGET glfw3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/dependencies/GLFW/include")
+if (MSVC)
+	set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/vs2019/glfw3.dll")
+	set_property(TARGET glfw3 PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/vs2019/glfw3dll.lib")
+	configure_file(${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/vs2019/glfw3.dll ${CMAKE_CURRENT_BINARY_DIR}/glfw3.dll COPYONLY)
+elseif(MINGW)
+	set_property(TARGET glfw3 PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/mingw/glfw3.dll")
+	set_property(TARGET glfw3 PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/mingw/libglfw3dll.a")
+	configure_file(${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/mingw/glfw3.dll ${CMAKE_CURRENT_BINARY_DIR}/glfw3.dll COPYONLY)
+endif()
 
 #add_library(SOIL STATIC IMPORTED)
 #set_property(TARGET SOIL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/include")

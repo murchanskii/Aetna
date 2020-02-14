@@ -9,6 +9,7 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <cstring>
 
 Engine::Engine() {
 
