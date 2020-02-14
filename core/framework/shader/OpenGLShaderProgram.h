@@ -5,8 +5,8 @@
 #ifndef AETNA_OPENGLSHADERPROGRAM_H
 #define AETNA_OPENGLSHADERPROGRAM_H
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "ShaderProgram.h"
 
 #include <glm/glm.hpp>
