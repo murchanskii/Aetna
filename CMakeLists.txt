@@ -21,9 +21,9 @@ elseif(MINGW)
 	configure_file(${CMAKE_SOURCE_DIR}/dependencies/GLFW/lib/mingw/glfw3.dll ${CMAKE_CURRENT_BINARY_DIR}/glfw3.dll COPYONLY)
 endif()
 
-#add_library(SOIL STATIC IMPORTED)
-#set_property(TARGET SOIL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/include")
-#set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/Aetna/dependencies/SOIL/lib/SOIL.lib")
+add_library(SOIL STATIC IMPORTED)
+set_property(TARGET SOIL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/dependencies/SOIL/include")
+set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependencies/SOIL/lib/SOIL.lib")
 
 add_executable(Aetna
         dependencies/glad/src/glad.c
