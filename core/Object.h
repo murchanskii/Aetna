@@ -7,16 +7,23 @@
 
 #include <glm/glm.hpp>
 #include "Mesh.h"
+#include "Material.h"
 
 class Object {
 public:
     Object();
     explicit Object(Mesh *t_mesh);
+    Object(Mesh* t_mesh, Material* t_material);
     virtual ~Object();
 
     Mesh *getMesh();
     void setMesh(Mesh *t_mesh);
+
+    glm::mat4 getTransform();
     void setTransform(glm::mat4 &t_transform);
+
+    Material* getMaterial();
+    void setMaterial(Material* mat);
 
     void setEnabled(bool enabled);
     bool isEnabled();
@@ -29,7 +36,7 @@ public:
 private:
     Mesh *m_mesh;
     glm::mat4 m_transform;
-    // todo: material
+    Material* m_material;
 
     bool is_enabled = true;
 

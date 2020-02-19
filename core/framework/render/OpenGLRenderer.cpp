@@ -82,9 +82,6 @@ void OpenGLRenderer::addObjectToRender(Object *obj) {
 
     OpenGLObject *gl_object = new OpenGLObject();
     gl_object->scene_object = obj;
-    gl_object->shader_program = new OpenGLShaderProgram();
-    gl_object->shader_program->setVertexShader("../core/framework/shader/default/vertex.glsl");
-    gl_object->shader_program->setFragmentShader("../core/framework/shader/default/fragment.glsl");
 
     if (!gl_object->scene_object->getMesh()->getVertices().empty()) {
         glGenVertexArrays(1, &gl_object->VAO);
@@ -126,7 +123,7 @@ void OpenGLRenderer::removeObjectFromRender(Object *obj) {
 
 void OpenGLRenderer::renderObjects() {
     for (OpenGLObject *gl_object : m_vec_gl_objects) {
-        gl_object->shader_program->use();
+        gl_object->scene_object->getMaterial()->use();
         glBindVertexArray(gl_object->VAO);
         glDrawArrays(GL_TRIANGLES, 0, gl_object->scene_object->getMesh()->getVertices().size() / 3);
         glBindVertexArray(0);

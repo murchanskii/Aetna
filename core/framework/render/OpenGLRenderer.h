@@ -8,7 +8,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Renderer.h"
-#include "../shader/OpenGLShaderProgram.h"
 
 #include <vector>
 
@@ -30,8 +29,6 @@ public:
 protected:
     struct OpenGLObject {
         Object *scene_object;
-
-        OpenGLShaderProgram *shader_program;
         GLuint VAO;
         std::vector<GLuint> vec_VBOs;
     };
