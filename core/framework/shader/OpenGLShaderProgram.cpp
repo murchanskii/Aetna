@@ -63,18 +63,7 @@ GLuint OpenGLShaderProgram::create_shader(const char *path_to_shader, GLuint sha
 	else {
 		std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 	}
-
-    /*try {
-        shader_file.open(path_to_shader);
-        std::stringstream shader_stream;
-        shader_stream << shader_file.rdbuf();
-        shader_file.close();
-        shader_contents = shader_stream.str();
-    }
-    catch(std::ifstream::failure &e) {
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-    }*/
-
+	
     GLuint shader_id;
     shader_id = glCreateShader(shader_type);
     const char *shader_contents_ch = shader_contents.c_str();
