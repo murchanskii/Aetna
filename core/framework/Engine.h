@@ -27,6 +27,8 @@ public:
     void addScript(Script *script);
     void removeScript(Script *script);
 
+	std::string getExecutablePath();
+
     bool isInitialized();
     Renderer *getRenderer();
 

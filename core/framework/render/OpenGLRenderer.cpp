@@ -7,7 +7,7 @@
 #include <iostream>
 #include <algorithm>
 
-OpenGLRenderer::OpenGLRenderer()  {
+OpenGLRenderer::OpenGLRenderer() : m_initialized(false) {
 
 }
 

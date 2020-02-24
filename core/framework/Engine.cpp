@@ -6,6 +6,11 @@
 #include "Game.h"
 #include "render/OpenGLRenderer.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#include <comdef.h>
+#endif
+
 #include <iostream>
 #include <algorithm>
 #include <sstream>
@@ -110,6 +115,21 @@ void Engine::removeScript(Script *script) {
 
     script->terminate();
     m_scripts.erase(std::find(m_scripts.begin(), m_scripts.end(), script));
+}
+
+std::string Engine::getExecutablePath()
+{
+#ifdef _WIN32
+	WCHAR wpath[MAX_PATH];
+	GetModuleFileNameW(NULL, wpath, MAX_PATH);
+	_bstr_t conv_path(wpath);
+	std::string path = conv_path;
+	path = path.substr(0, path.rfind('\\'));
+	return path;
+#elif __linux__
+
+#endif
+	return nullptr;
 }
 
 int Engine::process_args(int argc, char **argv) {

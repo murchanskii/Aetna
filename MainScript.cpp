@@ -6,6 +6,8 @@
 #include "core/framework/Game.h"
 #include <iostream>
 
+#include "core/framework/Engine.h"
+
 void MainScript::initialize() {
     std::vector<float> cube_vertices = {
             -1.0f,-1.0f,-1.0f, // triangle 1 : begin

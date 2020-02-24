@@ -50,9 +50,21 @@ GLuint OpenGLShaderProgram::getProgramID() {
 }
 
 GLuint OpenGLShaderProgram::create_shader(const char *path_to_shader, GLuint shader_type) {
-    std::ifstream shader_file;
+    std::ifstream shader_file(path_to_shader, std::ios::in);
     std::string shader_contents;
-    try {
+
+	if (shader_file.is_open()) {
+		std::string line;
+		while (std::getline(shader_file, line)) {
+			shader_contents += "\n" + line;
+		}
+		shader_file.close();
+	}
+	else {
+		std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+	}
+
+    /*try {
         shader_file.open(path_to_shader);
         std::stringstream shader_stream;
         shader_stream << shader_file.rdbuf();
@@ -61,7 +73,7 @@ GLuint OpenGLShaderProgram::create_shader(const char *path_to_shader, GLuint sha
     }
     catch(std::ifstream::failure &e) {
         std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-    }
+    }*/
 
     GLuint shader_id;
     shader_id = glCreateShader(shader_type);
