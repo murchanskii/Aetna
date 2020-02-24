@@ -5,9 +5,10 @@
 #ifndef AETNA_OBJECT_H
 #define AETNA_OBJECT_H
 
-#include <glm/glm.hpp>
 #include "Mesh.h"
 #include "Material.h"
+
+#include <glm/glm.hpp>
 
 class Object {
 public:
@@ -36,7 +37,7 @@ public:
 private:
     Mesh *m_mesh;
     glm::mat4 m_transform;
-    Material* m_material;
+    ::Material* m_material;
 
     bool is_enabled = true;
 

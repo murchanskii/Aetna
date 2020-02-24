@@ -124,8 +124,6 @@ void OpenGLRenderer::addObjectToRender(Object *obj) {
 void OpenGLRenderer::removeObjectFromRender(int id) {
     OpenGLObject *gl_object = m_vec_gl_objects[id];
     m_vec_gl_objects.erase(m_vec_gl_objects.begin() + id);
-    delete gl_object->shader_program;
-    gl_object->shader_program = nullptr;
     delete gl_object;
 }
 
@@ -147,7 +145,7 @@ void OpenGLRenderer::removeObjectFromRender(Object *obj) {
 
 void OpenGLRenderer::renderObjects() {
     for (OpenGLObject *gl_object : m_vec_gl_objects) {
-        gl_object->scene_object->getMaterial()->use();
+        gl_object->scene_object->getMaterial()->apply();
         glBindVertexArray(gl_object->VAO);
         glDrawArrays(GL_TRIANGLES, 0, gl_object->scene_object->getMesh()->getVertices().size() / 3);
         glBindVertexArray(0);

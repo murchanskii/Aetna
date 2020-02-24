@@ -14,7 +14,7 @@ public:
 	void save(const char *path);
 	void load(const char *path);
 
-	void use();
+	void apply();
 private:
 	ShaderProgram* m_shader_program;
 

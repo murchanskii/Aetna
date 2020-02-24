@@ -19,6 +19,7 @@ public:
 private:
     Mesh *cube_mesh;
     Object *cube;
+	Material* material;
 };
 
 

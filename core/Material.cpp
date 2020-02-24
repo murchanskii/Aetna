@@ -1,6 +1,4 @@
 #include "Material.h"
-#include "Material.h"
-#include "Material.h"
 #include "framework/shader/OpenGLShaderProgram.h"
 
 Material::Material() {
@@ -31,6 +29,6 @@ void Material::save(const char* path) {
 void Material::load(const char* path) {
 }
 
-void Material::use() {
+void Material::apply() {
 	m_shader_program->use();
 }

@@ -4,15 +4,15 @@
 
 #include "Object.h"
 
-Object::Object() : m_mesh(nullptr), m_material(nullptr) {
+Object::Object() : m_mesh(nullptr), m_material(nullptr), m_parent(nullptr), m_transform() {
 
 }
 
-Object::Object(Mesh *t_mesh) {
+Object::Object(Mesh *t_mesh) : m_material(nullptr), m_parent(nullptr), m_transform() {
     m_mesh = t_mesh;
 }
 
-Object::Object(Mesh* t_mesh, Material* t_material) {
+Object::Object(Mesh* t_mesh, Material* t_material) : m_parent(nullptr), m_transform() {
     m_mesh = t_mesh;
     m_material = t_material;
 }

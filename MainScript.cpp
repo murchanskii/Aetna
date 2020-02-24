@@ -3,7 +3,6 @@
 //
 
 #include "MainScript.h"
-#include "core/Object.h"
 #include "core/framework/Game.h"
 #include <iostream>
 
@@ -54,7 +53,9 @@ void MainScript::initialize() {
     };
 
     cube_mesh = new Mesh(vertices);
-    cube = new Object(cube_mesh);
+	material = new Material();
+    cube = new Object(cube_mesh, material);
+
     Game::get()->addObjectToScene(cube);
 }
 
@@ -69,5 +70,6 @@ void MainScript::render() {
 void MainScript::terminate() {
     delete cube;
     delete cube_mesh;
+	delete material;
     std::cout << "mainscript was terminated" << std::endl;
 }

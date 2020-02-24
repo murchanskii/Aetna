@@ -28,6 +28,8 @@ set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependenc
 add_executable(Aetna
         dependencies/glad/src/glad.c
         main.cpp
+        core/Material.h
+        core/Material.cpp
         core/Mesh.h
         core/Mesh.cpp
         core/Object.h
