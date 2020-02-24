@@ -5,6 +5,7 @@
 #include "OpenGLRenderer.h"
 
 #include <iostream>
+#include <algorithm>
 
 OpenGLRenderer::OpenGLRenderer()  {
 
@@ -57,6 +58,9 @@ void OpenGLRenderer::render() {
 }
 
 void OpenGLRenderer::terminate() {
+    for (int i = 0; i < m_vec_gl_objects.size(); ++i) {
+        removeObjectFromRender(i);
+    }
     glfwTerminate();
 }
 
@@ -117,8 +121,28 @@ void OpenGLRenderer::addObjectToRender(Object *obj) {
     m_vec_gl_objects.push_back(gl_object);
 }
 
-void OpenGLRenderer::removeObjectFromRender(Object *obj) {
+void OpenGLRenderer::removeObjectFromRender(int id) {
+    OpenGLObject *gl_object = m_vec_gl_objects[id];
+    m_vec_gl_objects.erase(m_vec_gl_objects.begin() + id);
+    delete gl_object->shader_program;
+    gl_object->shader_program = nullptr;
+    delete gl_object;
+}
 
+void OpenGLRenderer::removeObjectFromRender(Object *obj) {
+    int id_found = -1;
+    for (int i = 0; i < m_vec_gl_objects.size(); ++i) {
+        if (obj == m_vec_gl_objects[i]->scene_object) {
+            id_found = i;
+            break;
+        }
+    }
+
+    if (id_found == -1) {
+        return;
+    }
+
+    removeObjectFromRender(id_found);
 }
 
 void OpenGLRenderer::renderObjects() {
@@ -129,4 +153,3 @@ void OpenGLRenderer::renderObjects() {
         glBindVertexArray(0);
     }
 }
-

@@ -36,6 +36,7 @@ protected:
 
     virtual void addObjectToRender(Object *obj) = 0;
     virtual void removeObjectFromRender(Object *obj) = 0;
+    virtual void removeObjectFromRender(int id) = 0;
     virtual void renderObjects() = 0;
 
 private:

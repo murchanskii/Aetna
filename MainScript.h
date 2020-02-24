@@ -6,6 +6,8 @@
 #define AETNA_MAINSCRIPT_H
 
 #include "core/framework/Script.h"
+#include "core/Mesh.h"
+#include "core/Object.h"
 
 class MainScript : public Script {
 public:
@@ -14,6 +16,9 @@ public:
     void render() override;
     void terminate() override;
 
+private:
+    Mesh *cube_mesh;
+    Object *cube;
 };
 
 

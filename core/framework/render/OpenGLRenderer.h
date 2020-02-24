@@ -35,6 +35,7 @@ protected:
 
     void addObjectToRender(Object *obj) override;
     void removeObjectFromRender(Object *obj) override;
+    void removeObjectFromRender(int id) override;
     void renderObjects() override;
 
 private:

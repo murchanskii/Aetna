@@ -53,8 +53,8 @@ void MainScript::initialize() {
             0.0f,  0.5f, 0.0f
     };
 
-    Mesh *cube_mesh = new Mesh(vertices);
-    Object *cube = new Object(cube_mesh);
+    cube_mesh = new Mesh(vertices);
+    cube = new Object(cube_mesh);
     Game::get()->addObjectToScene(cube);
 }
 
@@ -67,5 +67,7 @@ void MainScript::render() {
 }
 
 void MainScript::terminate() {
+    delete cube;
+    delete cube_mesh;
     std::cout << "mainscript was terminated" << std::endl;
 }
