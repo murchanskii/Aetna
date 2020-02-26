@@ -18,7 +18,7 @@ public:
 private:
 	ShaderProgram* m_shader_program;
 
-	bool is_default;
+	bool default_shader_program_used;
 };
 
 #endif //AETNA_MATERIAL_H

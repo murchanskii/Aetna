@@ -27,6 +27,9 @@ set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependenc
 
 add_executable(Aetna
         dependencies/glad/src/glad.c
+        3rd/pugixml/pugixml.hpp
+        3rd/pugixml/pugixml.cpp
+        3rd/pugixml/pugiconfig.hpp
         main.cpp
         core/Material.h
         core/Material.cpp
@@ -46,6 +49,8 @@ add_executable(Aetna
 		core/framework/Game.h
 		core/framework/shader/ShaderProgram.h
 		core/framework/shader/OpenGLShaderProgram.cpp 
-		core/framework/shader/OpenGLShaderProgram.h)
+		core/framework/shader/OpenGLShaderProgram.h
+        core/framework/Utils.cpp
+        core/framework/Utils.h)
 
 target_link_libraries(Aetna glfw3)

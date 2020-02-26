@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<material>
+	<shader type="vertex" path="framework/shader/default/vertex.glsl"/>
+	<shader type="fragment" path="framework/shader/default/fragment.glsl"/>
+</material>
