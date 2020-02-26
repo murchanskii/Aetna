@@ -16,7 +16,7 @@
 #include <sstream>
 #include <cstring>
 
-Engine::Engine() {
+Engine::Engine() : start_time(std::chrono::system_clock::now()), m_renderer(nullptr), frame_seconds(0.0f), fps_count(0) {
 
 }
 
@@ -87,9 +87,20 @@ void Engine::run() {
         return;
     }
 
+	std::chrono::time_point<std::chrono::system_clock> frame_time;
+	float last_time = getTime();
+
     while (m_renderer->mainWindowIsOpen()) {
+		++fps_count;
+		frame_time = std::chrono::system_clock::now();
         update();
         m_renderer->swap();
+		frame_seconds = std::chrono::duration<float>(std::chrono::system_clock::now() - frame_time).count();
+
+		if (getTime() - last_time >= 1.0f) {
+			last_time = getTime();
+			fps_count = 0;
+		}
     }
 
     terminate();
@@ -130,6 +141,21 @@ std::string Engine::getExecutablePath()
 
 #endif
 	return nullptr;
+}
+
+float Engine::getTime()
+{
+	return std::chrono::duration<float>(std::chrono::system_clock::now() - start_time).count();
+}
+
+float Engine::getFrameTime()
+{
+	return frame_seconds;
+}
+
+int Engine::getFpsCount()
+{
+	return fps_count;
 }
 
 int Engine::process_args(int argc, char **argv) {

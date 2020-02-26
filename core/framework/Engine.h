@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <string>
+#include <chrono>
 
 class Engine {
 public:
@@ -29,12 +30,20 @@ public:
 
 	std::string getExecutablePath();
 
+	float getTime();
+	float getFrameTime();
+	int getFpsCount();
+
     bool isInitialized();
     Renderer *getRenderer();
 
 private:
     Engine();
     virtual ~Engine();
+
+	std::chrono::time_point<std::chrono::system_clock> start_time;
+	float frame_seconds;
+	int fps_count;
 
     bool m_is_initialized = false;
     std::vector<Script*> m_scripts;
