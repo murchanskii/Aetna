@@ -25,6 +25,7 @@ public:
     void swap() override;
 
     bool mainWindowIsOpen() override;
+    void setVerticalSync(int value) override;
 
 protected:
     struct OpenGLObject {

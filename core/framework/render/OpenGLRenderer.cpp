@@ -72,6 +72,10 @@ bool OpenGLRenderer::mainWindowIsOpen() {
     return !glfwWindowShouldClose(m_main_window);
 }
 
+void OpenGLRenderer::setVerticalSync(int value) {
+    glfwSwapInterval(value);
+}
+
 void OpenGLRenderer::swap() {
     glfwPollEvents();
     glfwSwapBuffers(m_main_window);

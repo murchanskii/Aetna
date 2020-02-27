@@ -18,6 +18,7 @@ public:
     }
 
     virtual bool mainWindowIsOpen() = 0;
+    virtual void setVerticalSync(int value) = 0;
 
     virtual void initialize(int window_w, int window_h, const char *window_t) = 0;
     virtual void update() = 0;

@@ -37,6 +37,11 @@ public:
     bool isInitialized();
     Renderer *getRenderer();
 
+    int getArgInt(int index);
+    float getArgFloat(int index);
+    const char *getArg(int index);
+    int getNumArgs();
+
 private:
     Engine();
     virtual ~Engine();
@@ -57,12 +62,16 @@ private:
     int window_height = 0;
     std::string window_title;
 
+    int vsync_val = 0;
+
     Renderer *m_renderer;
 
     void update();
     void terminate();
 
-    int process_args(int argc, char **argv);
+    void process_args(int argc, char **argv);
+
+    std::vector<const char*> app_args;
 };
 
 
