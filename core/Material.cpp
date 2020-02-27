@@ -17,7 +17,7 @@ Material::~Material() {
 	}
 }
 
-ShaderProgram const* Material::getShaderProgram() {
+ShaderProgram *Material::getShaderProgram() {
 	return m_shader_program;
 }
 
@@ -31,10 +31,14 @@ void Material::save(const char* path) {
 	pugi::xml_node xml_node_material = mat_xml.append_child("material");
 	pugi::xml_node xml_node_vertex_shdr = xml_node_material.append_child("shader");
 	xml_node_vertex_shdr.append_attribute("type").set_value("vertex");
-	xml_node_vertex_shdr.append_attribute("path");
+	if (m_shader_program->isVertexShaderBinded()) {
+		xml_node_vertex_shdr.append_attribute("path").set_value(m_shader_program->getVertexShaderPath());
+	}
 	pugi::xml_node xml_node_fragment_shdr = xml_node_material.append_child("shader");
 	xml_node_fragment_shdr.append_attribute("type").set_value("fragment");
-	xml_node_fragment_shdr.append_attribute("path");
+	if (m_shader_program->isFragmentShaderBinded()) {
+		xml_node_fragment_shdr.append_attribute("path").set_value(m_shader_program->getFragmentShaderPath());
+	}
 
 	mat_xml.save_file(path);
 }

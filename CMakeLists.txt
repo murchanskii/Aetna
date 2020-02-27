@@ -47,6 +47,9 @@ add_executable(Aetna
 		MainScript.h 
 		core/framework/Game.cpp 
 		core/framework/Game.h
+        core/framework/shader/Shader.h
+        core/framework/shader/OpenGLShader.h
+        core/framework/shader/OpenGLShader.cpp
 		core/framework/shader/ShaderProgram.h
 		core/framework/shader/OpenGLShaderProgram.cpp 
 		core/framework/shader/OpenGLShaderProgram.h

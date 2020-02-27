@@ -3,9 +3,9 @@
 //
 
 #include "OpenGLShaderProgram.h"
+#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <sstream>
-#include <fstream>
+
 #include <iostream>
 
 OpenGLShaderProgram::OpenGLShaderProgram() {
@@ -13,81 +13,73 @@ OpenGLShaderProgram::OpenGLShaderProgram() {
     glBindAttribLocation(m_program_id, 0, "pos"); // temp
     glBindAttribLocation(m_program_id, 1, "color"); // temp
 
-    m_vertex_shader_id = 0;
-    m_fragment_shader_id = 0;
+    m_vertex_shader = nullptr;
+    m_fragment_shader = nullptr;
 }
 
 OpenGLShaderProgram::~OpenGLShaderProgram() {
+    if (m_vertex_shader) {
+        delete m_vertex_shader;
+        m_vertex_shader = nullptr;
+    }
 
+    if (m_fragment_shader) {
+        delete m_fragment_shader;
+        m_fragment_shader = nullptr;
+    }
 }
 
 void OpenGLShaderProgram::setVertexShader(const char *path) {
-    m_vertex_shader_id = create_shader(path, GL_VERTEX_SHADER);
-    glAttachShader(m_program_id, m_vertex_shader_id);
+    m_vertex_shader = new OpenGLShader(path, OpenGLShader::Type::VERTEX);
+    glAttachShader(m_program_id, m_vertex_shader->getID());
 
-    if (m_fragment_shader_id > 0) {
+    if (m_fragment_shader && m_fragment_shader->getID() > 0) {
         glLinkProgram(m_program_id);
         check_program_linking(m_program_id);
     }
 }
 
 void OpenGLShaderProgram::setFragmentShader(const char *path) {
-    m_fragment_shader_id = create_shader(path, GL_FRAGMENT_SHADER);
-    glAttachShader(m_program_id, m_fragment_shader_id);
+    m_fragment_shader = new OpenGLShader(path, OpenGLShader::Type::FRAGMENT);
+    glAttachShader(m_program_id, m_fragment_shader->getID());
 
-    if (m_vertex_shader_id > 0) {
+    if (m_vertex_shader && m_vertex_shader->getID() > 0) {
         glLinkProgram(m_program_id);
         check_program_linking(m_program_id);
     }
+}
+
+bool OpenGLShaderProgram::isVertexShaderBinded() {
+    return m_vertex_shader;
+}
+
+bool OpenGLShaderProgram::isFragmentShaderBinded() {
+    return m_fragment_shader;
+}
+
+const char* OpenGLShaderProgram::getVertexShaderPath() {
+    if (!m_vertex_shader) {
+        return "";
+    }
+    return m_vertex_shader->getPath();
+}
+
+const char* OpenGLShaderProgram::getFragmentShaderPath() {
+    if (!m_fragment_shader) {
+        return "";
+    }
+    return m_fragment_shader->getPath();
 }
 
 void OpenGLShaderProgram::use() {
     glUseProgram(m_program_id);
 }
 
-GLuint OpenGLShaderProgram::getProgramID() {
+int OpenGLShaderProgram::getProgramID() {
     return m_program_id;
 }
 
-GLuint OpenGLShaderProgram::create_shader(const char *path_to_shader, GLuint shader_type) {
-    std::ifstream shader_file(path_to_shader, std::ios::in);
-    std::string shader_contents;
-
-	if (shader_file.is_open()) {
-		std::string line;
-		while (std::getline(shader_file, line)) {
-			shader_contents += "\n" + line;
-		}
-		shader_file.close();
-	}
-	else {
-		std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-	}
-	
-    GLuint shader_id;
-    shader_id = glCreateShader(shader_type);
-    const char *shader_contents_ch = shader_contents.c_str();
-    glShaderSource(shader_id, 1, &shader_contents_ch, nullptr);
-    glCompileShader(shader_id);
-    check_shader_compilation(shader_id);
-    return shader_id;
-}
-
-void OpenGLShaderProgram::check_shader_compilation(GLuint &shader_id) {
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader_id, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" <<
-                  infoLog << std::endl;
-    }
-    else {
-        std::cout << "SUCCESS:: Shader has been compiled" << std::endl;
-    }
-}
-
-void OpenGLShaderProgram::check_program_linking(GLuint &program_id) {
+void OpenGLShaderProgram::check_program_linking(int &program_id) {
     GLint success;
     GLchar infoLog[512];
     glGetProgramiv(program_id, GL_LINK_STATUS, &success);
@@ -100,22 +92,21 @@ void OpenGLShaderProgram::check_program_linking(GLuint &program_id) {
         std::cout << "SUCCESS:: Program has been linked" << std::endl;
 }
 
-void OpenGLShaderProgram::uniform3fv(const char *var_name, glm::vec3 data) {
-    GLint location = glGetUniformLocation(m_program_id, var_name);
-    glUniform3fv(location, 1, glm::value_ptr(data));
-}
-
-void OpenGLShaderProgram::uniformMatrix4fv(const char *var_name, glm::mat4 data) {
-    GLint location = glGetUniformLocation(m_program_id, var_name);
-    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data));
-}
-
-void OpenGLShaderProgram::uniform1f(const char *var_name, GLfloat data) {
-    GLint location = glGetUniformLocation(m_program_id, var_name);
-    glUniform1f(location, data);
-}
-
-void OpenGLShaderProgram::uniform1i(const char *var_name, GLint data) {
-    GLint location = glGetUniformLocation(m_program_id, var_name);
-    glUniform1i(location, data);
+void OpenGLShaderProgram::setVariable(const char* name, Variable* var) {
+    if (var->isInt()) {
+        GLint location = glGetUniformLocation(m_program_id, name);
+        glUniform1i(location, var->getInt());
+    } else if (var->isFloat()) {
+        GLint location = glGetUniformLocation(m_program_id, name);
+        glUniform1f(location, var->getFloat());
+    } else if (var->isVec3()) {
+        GLint location = glGetUniformLocation(m_program_id, name);
+        glUniform3fv(location, 1, glm::value_ptr(var->getVec3()));
+    } else if (var->isVec4()) {
+        GLint location = glGetUniformLocation(m_program_id, name);
+        glUniform4fv(location, 1, glm::value_ptr(var->getVec4()));
+    } else if (var->isMat4()) {
+        GLint location = glGetUniformLocation(m_program_id, name);
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(var->getMat4()));
+    }
 }

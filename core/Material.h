@@ -8,7 +8,7 @@ public:
 	Material();
 	~Material();
 
-	ShaderProgram const* getShaderProgram();
+	ShaderProgram *getShaderProgram();
 	void setShaderProgram(ShaderProgram* shdr_prog);
 
 	void save(const char *path);

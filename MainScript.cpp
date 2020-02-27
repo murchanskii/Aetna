@@ -24,6 +24,8 @@ void MainScript::initialize() {
 
 void MainScript::update() {
     //std::cout << "mainscript is updated" << std::endl;
+    material->getShaderProgram()->setVariable("new_color", 
+        &VariableVec4(glm::vec4(1.0f, 0.0f, 0.0f, glm::sin(Engine::get()->getTime() * 2.0f))));
 }
 
 void MainScript::render() {

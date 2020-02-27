@@ -1,12 +1,91 @@
 #ifndef AETNA_UTILS_H
 #define AETNA_UTILS_H
 
+#include <glm/glm.hpp>
 #include <string>
 
 class Utils {
 public:
 	static std::string readFile(const std::string &path);
 	static std::string getPathToCore();
+};
+
+class Variable {
+public:
+	virtual bool isInt();
+	virtual int getInt();
+	virtual void setInt(int value);
+
+	virtual bool isFloat();
+	virtual float getFloat();
+	virtual void setFloat(float value);
+
+	virtual bool isVec3();
+	virtual glm::vec3 getVec3();
+	virtual void setVec3(glm::vec3 value);
+
+	virtual bool isVec4();
+	virtual glm::vec4 getVec4();
+	virtual void setVec4(glm::vec4 value);
+
+	virtual bool isMat4();
+	virtual glm::mat4 getMat4();
+	virtual void setMat4(glm::mat4 value);
+};
+
+class VariableInt : public Variable {
+public:
+	explicit VariableInt(int value);
+	bool isInt() override;
+	int getInt() override;
+	void setInt(int value) override;
+
+private:
+	int data;
+};
+
+class VariableFloat : public Variable {
+public:
+	explicit VariableFloat(float value);
+	bool isFloat() override;
+	float getFloat() override;
+	void setFloat(float value) override;
+
+private:
+	float data;
+};
+
+class VariableVec3 : public Variable {
+public:
+	explicit VariableVec3(glm::vec3 value);
+	bool isVec3() override;
+	glm::vec3 getVec3() override;
+	void setVec3(glm::vec3 value) override;
+
+private:
+	glm::vec3 data;
+};
+
+class VariableVec4 : public Variable {
+public:
+	explicit VariableVec4(glm::vec4 value);
+	bool isVec4() override;
+	glm::vec4 getVec4() override;
+	void setVec4(glm::vec4 value) override;
+
+private:
+	glm::vec4 data;
+};
+
+class VariableMat4 : public Variable {
+public:
+	explicit VariableMat4(glm::mat4 value);
+	bool isMat4() override;
+	glm::mat4 getMat4() override;
+	void setMat4(glm::mat4 value) override;
+
+private:
+	glm::mat4 data;
 };
 
 #endif //AETNA_UTILS_H

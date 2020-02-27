@@ -43,6 +43,5 @@ protected:
 private:
     bool m_is_initialized = false;
 };
-//Renderer *Renderer::instance = nullptr;
 
 #endif //AETNA_RENDERER_H
