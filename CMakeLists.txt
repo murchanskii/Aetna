@@ -7,7 +7,8 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(${CMAKE_SOURCE_DIR}/dependencies/glad/include
                     ${CMAKE_SOURCE_DIR}/dependencies/GLFW/include
                     ${CMAKE_SOURCE_DIR}/dependencies/glm/include
-                    ${CMAKE_SOURCE_DIR}/dependencies/SOIL/include)
+                    ${CMAKE_SOURCE_DIR}/dependencies/SOIL/include
+                    ${CMAKE_SOURCE_DIR}/dependencies/pugixml/include)
                     
 add_library(glfw3 SHARED IMPORTED)
 set_property(TARGET glfw3 PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/dependencies/GLFW/include")
@@ -27,9 +28,7 @@ set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependenc
 
 add_executable(Aetna
         dependencies/glad/src/glad.c
-        3rd/pugixml/pugixml.hpp
-        3rd/pugixml/pugixml.cpp
-        3rd/pugixml/pugiconfig.hpp
+        dependencies/pugixml/src/pugixml.cpp
         main.cpp
         core/Material.h
         core/Material.cpp

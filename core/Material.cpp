@@ -2,7 +2,7 @@
 #include "framework/shader/OpenGLShaderProgram.h"
 #include "framework/Utils.h"
 
-#include "../3rd/pugixml/pugixml.hpp"
+#include <pugixml.hpp>
 
 Material::Material() {
 	default_shader_program_used = true;
