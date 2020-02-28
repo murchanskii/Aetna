@@ -26,7 +26,11 @@ public:
 
     int getProgramID();
 
-    void setVariable(const char* name, Variable* var) override;
+    void setVariable(std::string name, Variable* var) override;
+    Variable* getVariable(std::string name) override;
+    Variable* getVariable(int index) override;
+    std::string getVariableName(int index) override;
+    int getNumVariables() override;
     
 private:
     int m_program_id;
@@ -34,8 +38,9 @@ private:
     OpenGLShader* m_fragment_shader;
 
     void check_program_linking(int &program_id);
+    int get_var_index_by_name(std::string name);
 
-    std::map<const char *, Variable*> m_variables;
+    std::vector<std::pair<std::string, Variable*>> m_variables;
 };
 
 

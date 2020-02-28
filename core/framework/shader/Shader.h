@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 
+#include <string>
 #include <vector>
 
 class Shader {
@@ -22,7 +23,7 @@ public:
 	}
 
 	const char* getPath() {
-		return m_path;
+		return m_path.c_str();
 	}
 
 	Type getType() {
@@ -31,7 +32,7 @@ public:
 
 protected:
 	Type m_type;
-	const char* m_path;
+	std::string m_path;
 };
 
 #endif //AETNA_SHADER_H

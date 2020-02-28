@@ -3,11 +3,13 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 
 class Utils {
 public:
 	static std::string readFile(const std::string &path);
 	static std::string getPathToCore();
+	static std::vector<std::string> splitString(const std::string &str, const std::string &delimiters);
 };
 
 class Variable {

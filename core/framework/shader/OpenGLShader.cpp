@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-OpenGLShader::OpenGLShader(const char* path, Type type) {
+OpenGLShader::OpenGLShader(const char* path, Type type) : Shader(path, type) {
 	std::ifstream shader_file(path, std::ios::in);
 	std::string shader_contents;
 

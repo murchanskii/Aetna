@@ -23,6 +23,18 @@ std::string Utils::getPathToCore() {
     return path_to_core;
 }
 
+std::vector<std::string> Utils::splitString(const std::string& str, const std::string& delimiters) {
+    std::vector<std::string> result;
+    size_t last = 0; 
+    size_t next = 0; 
+    while ((next = str.find(delimiters, last)) != std::string::npos) {
+        result.push_back(str.substr(last, next - last));
+        last = next + 1;
+    } 
+    result.push_back(str.substr(last));
+	return result;
+}
+
 bool Variable::isInt() {
 	return false;
 }

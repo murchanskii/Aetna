@@ -18,7 +18,11 @@ public:
 	virtual const char* getFragmentShaderPath() = 0;
     virtual void use() = 0;
 
-	virtual void setVariable(const char* name, Variable *var) = 0;
+	virtual void setVariable(std::string name, Variable *var) = 0;
+	virtual Variable* getVariable(std::string name) = 0; 
+	virtual Variable* getVariable(int index) = 0;
+	virtual std::string getVariableName(int index) = 0;
+	virtual int getNumVariables() = 0;
 };
 
 

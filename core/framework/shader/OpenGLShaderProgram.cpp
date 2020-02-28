@@ -18,7 +18,7 @@ OpenGLShaderProgram::OpenGLShaderProgram() {
 }
 
 OpenGLShaderProgram::~OpenGLShaderProgram() {
-    for (std::pair<const char*, Variable*> var : m_variables) {
+    for (std::pair<std::string, Variable*> var : m_variables) {
         delete var.second;
         var.second = nullptr;
     }
@@ -78,21 +78,21 @@ const char* OpenGLShaderProgram::getFragmentShaderPath() {
 
 void OpenGLShaderProgram::use() {
     glUseProgram(m_program_id);
-    for (std::pair<const char*, Variable*> var : m_variables) {
+    for (std::pair<std::string, Variable*> var : m_variables) {
         if (var.second->isInt()) {
-            GLint location = glGetUniformLocation(m_program_id, var.first);
+            GLint location = glGetUniformLocation(m_program_id, var.first.c_str());
             glUniform1i(location, var.second->getInt());
         } else if (var.second->isFloat()) {
-            GLint location = glGetUniformLocation(m_program_id, var.first);
+            GLint location = glGetUniformLocation(m_program_id, var.first.c_str());
             glUniform1f(location, var.second->getFloat());
         } else if (var.second->isVec3()) {
-            GLint location = glGetUniformLocation(m_program_id, var.first);
+            GLint location = glGetUniformLocation(m_program_id, var.first.c_str());
             glUniform3fv(location, 1, glm::value_ptr(var.second->getVec3()));
         } else if (var.second->isVec4()) {
-            GLint location = glGetUniformLocation(m_program_id, var.first);
+            GLint location = glGetUniformLocation(m_program_id, var.first.c_str());
             glUniform4fv(location, 1, glm::value_ptr(var.second->getVec4()));
         } else if (var.second->isMat4()) {
-            GLint location = glGetUniformLocation(m_program_id, var.first);
+            GLint location = glGetUniformLocation(m_program_id, var.first.c_str());
             glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(var.second->getMat4()));
         }
     }
@@ -115,21 +115,55 @@ void OpenGLShaderProgram::check_program_linking(int &program_id) {
         std::cout << "SUCCESS:: Program has been linked" << std::endl;
 }
 
-void OpenGLShaderProgram::setVariable(const char* name, Variable* var) {
-    if (m_variables[name]) {
-        delete m_variables[name];
-        m_variables[name] = nullptr;
+int OpenGLShaderProgram::get_var_index_by_name(std::string name) {
+    for (int i = 0; i < m_variables.size(); ++i) {
+        if (name == m_variables[i].first) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void OpenGLShaderProgram::setVariable(std::string name, Variable* var) {
+    int var_index = get_var_index_by_name(name);
+    if (var_index >= 0) {
+        delete m_variables[var_index].second;
+        m_variables[var_index].second = nullptr;
+        m_variables.erase(m_variables.begin() + var_index);
     }
 
+    m_variables.push_back(std::pair<std::string, Variable*>(name, nullptr));
+    var_index = m_variables.size() - 1;
+
     if (var->isInt()) {
-        m_variables[name] = new VariableInt(var->getInt());
+        m_variables[var_index].second = new VariableInt(var->getInt());
     } else if (var->isFloat()) {
-        m_variables[name] = new VariableFloat(var->getFloat());
+        m_variables[var_index].second = new VariableFloat(var->getFloat());
     } else if (var->isVec3()) {
-        m_variables[name] = new VariableVec3(var->getVec3());
+        m_variables[var_index].second = new VariableVec3(var->getVec3());
     } else if (var->isVec4()) {
-        m_variables[name] = new VariableVec4(var->getVec4());
+        m_variables[var_index].second = new VariableVec4(var->getVec4());
     } else if (var->isMat4()) {
-        m_variables[name] = new VariableMat4(var->getMat4());
+        m_variables[var_index].second = new VariableMat4(var->getMat4());
     }
+}
+
+Variable* OpenGLShaderProgram::getVariable(std::string name) {
+    int var_index = get_var_index_by_name(name);
+    if (var_index >= 0) {
+        return m_variables[var_index].second;
+    }
+    return nullptr;
+}
+
+Variable* OpenGLShaderProgram::getVariable(int index) {
+    return m_variables[index].second;
+}
+
+std::string OpenGLShaderProgram::getVariableName(int index) {
+    return m_variables[index].first;
+}
+
+int OpenGLShaderProgram::getNumVariables() {
+    return m_variables.size();
 }
