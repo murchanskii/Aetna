@@ -9,6 +9,7 @@
 #include "OpenGLShader.h"
 
 #include <string>
+#include <map>
 
 class OpenGLShaderProgram : public ShaderProgram {
 public:
@@ -34,6 +35,7 @@ private:
 
     void check_program_linking(int &program_id);
 
+    std::map<const char *, Variable*> m_variables;
 };
 
 

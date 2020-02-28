@@ -149,9 +149,11 @@ void OpenGLRenderer::removeObjectFromRender(Object *obj) {
 
 void OpenGLRenderer::renderObjects() {
     for (OpenGLObject *gl_object : m_vec_gl_objects) {
-        gl_object->scene_object->getMaterial()->apply();
-        glBindVertexArray(gl_object->VAO);
-        glDrawArrays(GL_TRIANGLES, 0, gl_object->scene_object->getMesh()->getVertices().size() / 3);
-        glBindVertexArray(0);
+        if (gl_object->scene_object->isEnabled()) {
+            gl_object->scene_object->getMaterial()->apply();
+            glBindVertexArray(gl_object->VAO);
+            glDrawArrays(GL_TRIANGLES, 0, gl_object->scene_object->getMesh()->getVertices().size() / 3);
+            glBindVertexArray(0);
+        }
     }
 }

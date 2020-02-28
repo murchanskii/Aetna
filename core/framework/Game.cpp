@@ -17,7 +17,6 @@ Game::~Game() {
 void Game::addObjectToScene(Object *obj) {
     GameObject gobject;
     gobject.object = obj;
-    gobject.last_enabled = obj->isEnabled();
 
     m_vec_gobjects.push_back(gobject);
     Engine::get()->getRenderer()->addObjectToRender(obj);
@@ -55,12 +54,6 @@ void Game::update() {
 
 void Game::render() {
     for (GameObject gobject : m_vec_gobjects) {
-        if (!gobject.last_enabled && gobject.object->isEnabled()) {
-            Engine::get()->getRenderer()->addObjectToRender(gobject.object);
-        }
-        else if (gobject.last_enabled && !gobject.object->isEnabled()) {
-            Engine::get()->getRenderer()->removeObjectFromRender(gobject.object);
-        }
-        gobject.last_enabled = gobject.object->isEnabled();
+
     }
 }

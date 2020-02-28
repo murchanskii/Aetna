@@ -33,7 +33,6 @@ private:
 
     struct GameObject {
         Object *object;
-        bool last_enabled;
     };
 
     std::vector<GameObject> m_vec_gobjects;

@@ -18,6 +18,11 @@ OpenGLShaderProgram::OpenGLShaderProgram() {
 }
 
 OpenGLShaderProgram::~OpenGLShaderProgram() {
+    for (std::pair<const char*, Variable*> var : m_variables) {
+        delete var.second;
+        var.second = nullptr;
+    }
+
     if (m_vertex_shader) {
         delete m_vertex_shader;
         m_vertex_shader = nullptr;
@@ -73,6 +78,24 @@ const char* OpenGLShaderProgram::getFragmentShaderPath() {
 
 void OpenGLShaderProgram::use() {
     glUseProgram(m_program_id);
+    for (std::pair<const char*, Variable*> var : m_variables) {
+        if (var.second->isInt()) {
+            GLint location = glGetUniformLocation(m_program_id, var.first);
+            glUniform1i(location, var.second->getInt());
+        } else if (var.second->isFloat()) {
+            GLint location = glGetUniformLocation(m_program_id, var.first);
+            glUniform1f(location, var.second->getFloat());
+        } else if (var.second->isVec3()) {
+            GLint location = glGetUniformLocation(m_program_id, var.first);
+            glUniform3fv(location, 1, glm::value_ptr(var.second->getVec3()));
+        } else if (var.second->isVec4()) {
+            GLint location = glGetUniformLocation(m_program_id, var.first);
+            glUniform4fv(location, 1, glm::value_ptr(var.second->getVec4()));
+        } else if (var.second->isMat4()) {
+            GLint location = glGetUniformLocation(m_program_id, var.first);
+            glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(var.second->getMat4()));
+        }
+    }
 }
 
 int OpenGLShaderProgram::getProgramID() {
@@ -93,20 +116,20 @@ void OpenGLShaderProgram::check_program_linking(int &program_id) {
 }
 
 void OpenGLShaderProgram::setVariable(const char* name, Variable* var) {
+    if (m_variables[name]) {
+        delete m_variables[name];
+        m_variables[name] = nullptr;
+    }
+
     if (var->isInt()) {
-        GLint location = glGetUniformLocation(m_program_id, name);
-        glUniform1i(location, var->getInt());
+        m_variables[name] = new VariableInt(var->getInt());
     } else if (var->isFloat()) {
-        GLint location = glGetUniformLocation(m_program_id, name);
-        glUniform1f(location, var->getFloat());
+        m_variables[name] = new VariableFloat(var->getFloat());
     } else if (var->isVec3()) {
-        GLint location = glGetUniformLocation(m_program_id, name);
-        glUniform3fv(location, 1, glm::value_ptr(var->getVec3()));
+        m_variables[name] = new VariableVec3(var->getVec3());
     } else if (var->isVec4()) {
-        GLint location = glGetUniformLocation(m_program_id, name);
-        glUniform4fv(location, 1, glm::value_ptr(var->getVec4()));
+        m_variables[name] = new VariableVec4(var->getVec4());
     } else if (var->isMat4()) {
-        GLint location = glGetUniformLocation(m_program_id, name);
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(var->getMat4()));
+        m_variables[name] = new VariableMat4(var->getMat4());
     }
 }
