@@ -37,7 +37,7 @@ public:
 private:
     Mesh *m_mesh;
     glm::mat4 m_transform;
-    ::Material* m_material;
+    Material* m_material;
 
     bool is_enabled = true;
 

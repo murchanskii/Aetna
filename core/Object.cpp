@@ -4,17 +4,19 @@
 
 #include "Object.h"
 
-Object::Object() : m_mesh(nullptr), m_material(nullptr), m_parent(nullptr), m_transform() {
-
+Object::Object() : m_mesh(nullptr), m_material(nullptr), m_parent(nullptr) {
+    setTransform(glm::mat4(1.0f));
 }
 
-Object::Object(Mesh *t_mesh) : m_material(nullptr), m_parent(nullptr), m_transform() {
+Object::Object(Mesh *t_mesh) : m_material(nullptr), m_parent(nullptr) {
     m_mesh = t_mesh;
+    setTransform(glm::mat4(1.0f));
 }
 
-Object::Object(Mesh* t_mesh, Material* t_material) : m_parent(nullptr), m_transform() {
+Object::Object(Mesh* t_mesh, Material* t_material) : m_parent(nullptr) {
     m_mesh = t_mesh;
     m_material = t_material;
+    setTransform(glm::mat4(1.0f));
 }
 
 Object::~Object() {
@@ -31,6 +33,7 @@ glm::mat4 Object::getTransform() {
 
 void Object::setTransform(glm::mat4 &t_transform) {
     m_transform = t_transform;
+    m_material->getShaderProgram()->setVariable("transform", &VariableMat4(m_transform));
 }
 
 Material* Object::getMaterial() {
