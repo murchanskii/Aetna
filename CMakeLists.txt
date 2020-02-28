@@ -36,11 +36,15 @@ add_executable(Aetna
         core/Mesh.cpp
         core/Object.h
         core/Object.cpp
+        core/Camera.h
+        core/Camera.cpp
         core/framework/render/Renderer.h
         core/framework/render/OpenGLRenderer.cpp
         core/framework/render/OpenGLRenderer.h
         core/framework/Engine.cpp
         core/framework/Engine.h 
+        core/framework/Controls.cpp
+        core/framework/Controls.h 
 		core/framework/Script.h 
 		MainScript.cpp 
 		MainScript.h 

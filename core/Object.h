@@ -34,9 +34,9 @@ public:
     void addChild(Object *child);
     Object *getChild(int num);
 
-private:
+protected:
     Mesh *m_mesh;
-    glm::mat4 m_transform;
+    glm::mat4 m_model;
     Material* m_material;
 
     bool is_enabled = true;
