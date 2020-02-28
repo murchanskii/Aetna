@@ -47,6 +47,8 @@ private:
 
     GLFWwindow *m_main_window = nullptr;
     std::vector<OpenGLObject*> m_vec_gl_objects;
+
+    void glfw_input();
 };
 
 

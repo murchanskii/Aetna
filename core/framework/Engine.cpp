@@ -53,11 +53,11 @@ void Engine::initialize(int argc, char **argv) {
 }
 
 void Engine::update() {
+    m_renderer->update();
+    Game::get()->update();
     for (Script *script : m_scripts) {
         script->update();
     }
-    Game::get()->update();
-    m_renderer->update();
 
     for (Script *script : m_scripts) {
         script->render();
