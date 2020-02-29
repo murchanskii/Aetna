@@ -7,6 +7,7 @@
 
 #include "Script.h"
 #include "render/Renderer.h"
+#include "input/InputProxy.h"
 
 #include <vector>
 #include <string>
@@ -65,6 +66,7 @@ private:
     int vsync_val = 0;
 
     Renderer *m_renderer;
+    InputProxy* m_input_proxy;
 
     void update();
     void terminate();

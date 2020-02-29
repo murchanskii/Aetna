@@ -57,6 +57,9 @@ add_executable(Aetna
 		core/framework/shader/OpenGLShaderProgram.cpp 
 		core/framework/shader/OpenGLShaderProgram.h
         core/framework/Utils.cpp
-        core/framework/Utils.h)
+        core/framework/Utils.h
+        core/framework/input/InputProxy.h
+        core/framework/input/InputGLFW.h
+        core/framework/input/InputGLFW.cpp)
 
 target_link_libraries(Aetna glfw3)

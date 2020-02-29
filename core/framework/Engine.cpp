@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "Game.h"
 #include "render/OpenGLRenderer.h"
+#include "input/InputGLFW.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -13,7 +14,7 @@
 
 #include <iostream>
 
-Engine::Engine() : start_time(std::chrono::system_clock::now()), m_renderer(nullptr), frame_seconds(0.0f), fps_count(0) {
+Engine::Engine() : start_time(std::chrono::system_clock::now()), m_renderer(nullptr), m_input_proxy(nullptr), frame_seconds(0.0f), fps_count(0) {
 
 }
 
@@ -23,7 +24,7 @@ Engine::~Engine() {
 
 void Engine::initialize(int argc, char **argv) {
     if (isInitialized()) {
-        return;
+        terminate();
     }
 
     process_args(argc, argv);
@@ -49,15 +50,26 @@ void Engine::initialize(int argc, char **argv) {
 
     m_renderer->initialize(window_width, window_height, window_title.c_str());
     m_renderer->setVerticalSync(vsync_val);
+
+    switch (renderer_type) {
+    case RendererType::OPENGL:
+        m_input_proxy = new InputGLFW(OpenGLRenderer::get()->getMainWindow());
+        break;
+    case RendererType::DIRECT3D:
+        break;
+    }
+
     m_is_initialized = true;
 }
 
 void Engine::update() {
-    m_renderer->update();
-    Game::get()->update();
+    m_input_proxy->update();
+
     for (Script *script : m_scripts) {
         script->update();
     }
+    Game::get()->update();
+    m_renderer->update();
 
     for (Script *script : m_scripts) {
         script->render();
@@ -76,6 +88,10 @@ void Engine::terminate() {
     }
 
     m_renderer->terminate();
+
+    if (m_input_proxy) {
+        delete m_input_proxy;
+    }
 }
 
 void Engine::run() {

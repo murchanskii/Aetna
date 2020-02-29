@@ -24,6 +24,7 @@ public:
     void terminate() override;
     void swap() override;
 
+    GLFWwindow* getMainWindow();
     bool mainWindowIsOpen() override;
     void setVerticalSync(int value) override;
 
@@ -47,8 +48,6 @@ private:
 
     GLFWwindow *m_main_window = nullptr;
     std::vector<OpenGLObject*> m_vec_gl_objects;
-
-    void glfw_input();
 };
 
 
