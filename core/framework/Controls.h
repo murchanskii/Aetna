@@ -1,6 +1,8 @@
 #ifndef AETNA_CONTROLS_H
 #define AETNA_CONTROLS_H
 
+#include "input/InputProxy.h"
+
 class Controls {
 public:
     static Controls* get() {
@@ -50,19 +52,46 @@ public:
         KEY_Z
     };
 
+    enum class MouseButtons {
+        MOUSE_RIGHT_BUTTON = 0,
+        MOUSE_MIDDLE_BUTTON,
+        MOUSE_LEFT_BUTTON
+    };
+
     enum class States {
-        KEY_RELEASE = 0,
-        KEY_PRESS
+        KEY_FREE = 0,
+        KEY_RELEASE,
+        KEY_PRESS,
+
+        MOUSE_FREE,
+        MOUSE_RELEASE,
+        MOUSE_PRESS
     };
 
     bool getKeyState(Keys key, States state);
     void setKeyState(Keys key, States state);
 
+    bool getMouseState(MouseButtons mouse_btn, States state);
+    void setMouseState(MouseButtons mouse_btn, States state);
+
+    int getMouseX();
+    int getMouseY();
+
+    int getScroll();
+
 private:
     Controls();
     virtual ~Controls();
+    friend class InputProxy;
 
     States key_states[35];
+    States mouse_btn_states[3];
+    int mouse_x;
+    int mouse_y;
+    int scroll_direction;
+
+    void set_mouse_position(int x, int y);
+    void set_scroll_direction(int dir);
 };
 
 #endif //AETNA_CONTROLS_H

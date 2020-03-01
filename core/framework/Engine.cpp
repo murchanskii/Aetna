@@ -63,7 +63,7 @@ void Engine::initialize(int argc, char **argv) {
 }
 
 void Engine::update() {
-    m_input_proxy->update();
+    m_input_proxy->updateInput();
 
     for (Script *script : m_scripts) {
         script->update();
@@ -87,11 +87,13 @@ void Engine::terminate() {
         script->terminate();
     }
 
-    m_renderer->terminate();
-
     if (m_input_proxy) {
+        m_input_proxy->terminate();
         delete m_input_proxy;
+        m_input_proxy = nullptr;
     }
+
+    m_renderer->terminate();
 }
 
 void Engine::run() {

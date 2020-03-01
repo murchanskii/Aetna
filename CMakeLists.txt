@@ -59,6 +59,7 @@ add_executable(Aetna
         core/framework/Utils.cpp
         core/framework/Utils.h
         core/framework/input/InputProxy.h
+        core/framework/input/InputProxy.cpp
         core/framework/input/InputGLFW.h
         core/framework/input/InputGLFW.cpp)
 
