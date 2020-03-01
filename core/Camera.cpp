@@ -5,8 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera() :
-		m_fov(45.0f), 
+		m_fov(45.0f),
+		m_direction(glm::vec3(0.0f, 0.0f, -1.0f)),
 		m_position(glm::vec3(0.0f)),
+		m_view(glm::mat4(1.0f)),
+		m_projection(glm::mat4(1.0f)),
 		m_up(glm::vec3(0.0f, 1.0f, 0.0f)),
 		m_znear(0.01f),
 		m_zfar(100.0f) {
@@ -14,7 +17,10 @@ Camera::Camera() :
 }
 
 Camera::Camera(glm::vec3 pos, float fov, float znear, float zfar) : 
-		m_up(glm::vec3(0.0f, 1.0f, 0.0f)) {
+		m_up(glm::vec3(0.0f, 1.0f, 0.0f)),
+		m_direction(glm::vec3(0.0f, 0.0f, -1.0f)),
+		m_view(glm::mat4(1.0f)),
+		m_projection(glm::mat4(1.0f)) {
 	m_position = pos;
 	update();
 }
@@ -67,6 +73,14 @@ glm::mat4 Camera::getView() {
 	return m_view;
 }
 
+void Camera::setDirection(glm::vec3 direction) {
+	m_direction = direction;
+}
+
+glm::vec3 Camera::getDirection() {
+	return m_direction;
+}
+
 void Camera::setProjection(glm::mat4 projection) {
 	m_projection = projection;
 }
@@ -76,8 +90,6 @@ glm::mat4 Camera::getProjection() {
 }
 
 void Camera::update() {
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
-
-	m_view = glm::lookAt(m_position, m_position + cameraFront, m_up);
+	m_view = glm::lookAt(m_position, m_position + m_direction, m_up);
 	m_projection = glm::perspective(glm::radians(m_fov), Engine::get()->getWindowWidth() / (float) Engine::get()->getWindowHeight(), m_znear, m_zfar);
 }

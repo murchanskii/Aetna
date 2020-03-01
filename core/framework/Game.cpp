@@ -76,9 +76,6 @@ void Game::update() {
     
     for (int i = 0; i < getNumObjectsInScene(); ++i) {
         getObjectFromScene(i)->update();
-        /*getObjectFromScene(i)->getMaterial()->getShaderProgram()->setVariable("transform", &VariableMat4(
-            m_camera->getProjection() * m_camera->getView() * getObjectFromScene(i)->getTransform()
-        ));*/
     }
 }
 

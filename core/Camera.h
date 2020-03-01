@@ -26,6 +26,9 @@ public:
 	void setView(glm::mat4 view);
 	glm::mat4 getView();
 
+	void setDirection(glm::vec3 direction);
+	glm::vec3 getDirection();
+
 	void setProjection(glm::mat4 projection);
 	glm::mat4 getProjection();
 
@@ -35,6 +38,7 @@ private:
 	glm::vec3 m_position;
 
 	glm::vec3 m_up;
+	glm::vec3 m_direction;
 	float m_fov;
 	float m_znear;
 	float m_zfar;

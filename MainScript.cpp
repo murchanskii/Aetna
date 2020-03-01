@@ -24,9 +24,7 @@ void MainScript::initialize() {
     Game::get()->setCamera(player->getCamera());
     Game::get()->addObjectToScene(player);
 
-    player->setPosition(glm::vec3(0.0f, 0.0f, -1.0f));
-
-    //Game::get()->getCamera()->setPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+    player->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
 }
 
 void MainScript::update() {
