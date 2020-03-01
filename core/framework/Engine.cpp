@@ -88,7 +88,6 @@ void Engine::terminate() {
     }
 
     if (m_input_proxy) {
-        m_input_proxy->terminate();
         delete m_input_proxy;
         m_input_proxy = nullptr;
     }

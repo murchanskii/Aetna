@@ -16,9 +16,7 @@ public:
 
     void updateInput() override;
     void setMainWindow(GLFWwindow *window);
-
-    void terminate() override;
-    
+        
 private:
     static InputGLFW* last_instance;
     GLFWwindow* m_main_window;

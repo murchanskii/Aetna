@@ -2,9 +2,6 @@
 
 #include "../Controls.h"
 
-void InputProxy::terminate() {
-}
-
 void InputProxy::set_mouse_position(int x, int y) {
 	Controls::get()->set_mouse_position(x, y);
 }

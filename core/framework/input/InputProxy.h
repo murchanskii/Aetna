@@ -11,7 +11,6 @@ public:
     }
 
     virtual void updateInput() = 0;
-    virtual void terminate();
 
 protected:
     void set_mouse_position(int x, int y);

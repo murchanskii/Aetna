@@ -68,11 +68,6 @@ void InputGLFW::setMainWindow(GLFWwindow* window) {
     m_main_window = window;
 }
 
-void InputGLFW::terminate() {
-    last_instance = nullptr;
-    m_main_window = nullptr;
-}
-
 void InputGLFW::initialize_keymap() {
     keymap[GLFW_KEY_0] = Controls::Keys::KEY_0;
     keymap[GLFW_KEY_1] = Controls::Keys::KEY_1;
