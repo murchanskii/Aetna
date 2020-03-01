@@ -61,6 +61,9 @@ add_executable(Aetna
         core/framework/input/InputProxy.h
         core/framework/input/InputProxy.cpp
         core/framework/input/InputGLFW.h
-        core/framework/input/InputGLFW.cpp)
+        core/framework/input/InputGLFW.cpp
+        core/framework/objects/Player.h
+        core/framework/objects/PlayerFree.h
+        core/framework/objects/PlayerFree.cpp)
 
 target_link_libraries(Aetna glfw3)

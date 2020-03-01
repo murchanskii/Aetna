@@ -7,6 +7,7 @@
 
 #include "Mesh.h"
 #include "Material.h"
+#include "framework/Game.h"
 
 #include <glm/glm.hpp>
 
@@ -17,27 +18,33 @@ public:
     Object(Mesh* t_mesh, Material* t_material);
     virtual ~Object();
 
-    Mesh *getMesh();
-    void setMesh(Mesh *t_mesh);
+    virtual Mesh *getMesh();
+    virtual void setMesh(Mesh *t_mesh);
 
-    glm::mat4 getTransform();
-    void setTransform(glm::mat4 t_transform);
+    virtual glm::mat4 getTransform();
+    virtual void setTransform(glm::mat4 t_transform);
 
-    Material* getMaterial();
-    void setMaterial(Material* mat);
+    virtual glm::vec3 getPosition();
+    virtual void setPosition(glm::vec3 pos);
 
-    void setEnabled(bool enabled);
-    bool isEnabled();
+    virtual Material* getMaterial();
+    virtual void setMaterial(Material* mat);
 
-    void setParent(Object *parent);
-    Object *getParent();
-    void addChild(Object *child);
-    Object *getChild(int num);
+    virtual void setEnabled(bool enabled);
+    virtual bool isEnabled();
+
+    virtual void setParent(Object *parent);
+    virtual Object *getParent();
+    virtual void addChild(Object *child);
+    virtual Object *getChild(int num);
 
 protected:
     Mesh *m_mesh;
     glm::mat4 m_model;
     Material* m_material;
+
+    friend class Game;
+    virtual void update();
 
     bool is_enabled = true;
 

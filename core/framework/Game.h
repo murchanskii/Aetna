@@ -9,6 +9,7 @@
 #include "../Camera.h"
 
 class Camera;
+class Object;
 
 class Game {
 public:

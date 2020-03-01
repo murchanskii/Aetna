@@ -4,6 +4,8 @@
 
 #include "Object.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 Object::Object() : m_mesh(nullptr), m_material(nullptr), m_parent(nullptr) {
     setTransform(glm::mat4(1.0f));
 }
@@ -33,6 +35,14 @@ glm::mat4 Object::getTransform() {
 
 void Object::setTransform(glm::mat4 t_transform) {
     m_model = t_transform;
+}
+
+glm::vec3 Object::getPosition() {
+    return glm::vec3(m_model[3].x, m_model[3].y, m_model[3].z);
+}
+
+void Object::setPosition(glm::vec3 pos) {
+    m_model = glm::translate(glm::mat4(1.0f), pos);
 }
 
 Material* Object::getMaterial() {
@@ -69,4 +79,12 @@ void Object::addChild(Object *child) {
 
 Object *Object::getChild(int num) {
     return nullptr;
+}
+
+void Object::update() {
+    if (m_material && m_material->getShaderProgram()) {
+        m_material->getShaderProgram()->setVariable("transform", &VariableMat4(
+            Game::get()->getCamera()->getProjection() * Game::get()->getCamera()->getView() * m_model
+        ));
+    }
 }

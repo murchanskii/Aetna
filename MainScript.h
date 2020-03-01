@@ -8,6 +8,7 @@
 #include "core/framework/Script.h"
 #include "core/Mesh.h"
 #include "core/Object.h"
+#include "core/framework/objects/PlayerFree.h"
 
 class MainScript : public Script {
 public:
@@ -20,6 +21,8 @@ private:
     Mesh *cube_mesh;
     Object *cube;
 	Material* material;
+
+    PlayerFree* player;
 };
 
 

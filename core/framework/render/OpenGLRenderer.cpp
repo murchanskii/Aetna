@@ -95,7 +95,7 @@ void OpenGLRenderer::addObjectToRender(Object *obj) {
     OpenGLObject *gl_object = new OpenGLObject();
     gl_object->scene_object = obj;
 
-    if (!gl_object->scene_object->getMesh()->getVertices().empty()) {
+    if (gl_object->scene_object->getMesh() && !gl_object->scene_object->getMesh()->getVertices().empty()) {
         glGenVertexArrays(1, &gl_object->VAO);
         gl_object->vec_VBOs.push_back(0);
         glGenBuffers(1, &gl_object->vec_VBOs[0]); // vertices
@@ -153,7 +153,7 @@ void OpenGLRenderer::removeObjectFromRender(Object *obj) {
 
 void OpenGLRenderer::renderObjects() {
     for (OpenGLObject *gl_object : m_vec_gl_objects) {
-        if (gl_object->scene_object->isEnabled()) {
+        if (gl_object->scene_object->isEnabled() && gl_object->scene_object->getMaterial()) {
             gl_object->scene_object->getMaterial()->apply();
             glBindVertexArray(gl_object->VAO);
             glDrawArrays(GL_TRIANGLES, 0, gl_object->scene_object->getMesh()->getVertices().size() / 3);
