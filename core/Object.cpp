@@ -31,9 +31,8 @@ glm::mat4 Object::getTransform() {
     return m_model;
 }
 
-void Object::setTransform(glm::mat4 &t_transform) {
+void Object::setTransform(glm::mat4 t_transform) {
     m_model = t_transform;
-    m_material->getShaderProgram()->setVariable("transform", &VariableMat4(m_model));
 }
 
 Material* Object::getMaterial() {

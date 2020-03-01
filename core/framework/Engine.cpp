@@ -173,6 +173,14 @@ int Engine::getFpsCount()
 	return fps_count;
 }
 
+int Engine::getWindowWidth() {
+    return window_width;
+}
+
+int Engine::getWindowHeight() {
+    return window_height;
+}
+
 void Engine::process_args(int argc, char **argv) {
     app_args.push_back(argv[0]);
 

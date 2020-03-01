@@ -6,6 +6,9 @@
 #define AETNA_GAME_H
 
 #include "../Object.h"
+#include "../Camera.h"
+
+class Camera;
 
 class Game {
 public:
@@ -24,6 +27,9 @@ public:
     Object *getObjectFromScene(int num);
     int findObjectInScene(const char *name);
 
+    Camera* getCamera();
+    void setCamera(Camera* cam);
+
     void update();
     void render();
 
@@ -34,6 +40,9 @@ private:
     struct GameObject {
         Object *object;
     };
+
+    Camera* m_camera;
+    bool default_camera;
 
     std::vector<GameObject> m_vec_gobjects;
 };

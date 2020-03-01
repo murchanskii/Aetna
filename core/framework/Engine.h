@@ -35,6 +35,9 @@ public:
 	float getFrameTime();
 	int getFpsCount();
 
+    int getWindowWidth();
+    int getWindowHeight();
+
     bool isInitialized();
     Renderer *getRenderer();
 

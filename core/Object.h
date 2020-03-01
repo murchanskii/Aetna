@@ -21,7 +21,7 @@ public:
     void setMesh(Mesh *t_mesh);
 
     glm::mat4 getTransform();
-    void setTransform(glm::mat4 &t_transform);
+    void setTransform(glm::mat4 t_transform);
 
     Material* getMaterial();
     void setMaterial(Material* mat);

@@ -6,12 +6,15 @@
 #include "Engine.h"
 #include <algorithm>
 
-Game::Game() {
-
+Game::Game() : default_camera(false) {
+    setCamera(nullptr);
 }
 
 Game::~Game() {
-
+    if (default_camera) {
+        delete m_camera;
+        m_camera = nullptr;
+    }
 }
 
 void Game::addObjectToScene(Object *obj) {
@@ -48,8 +51,35 @@ int Game::getNumObjectsInScene() {
     return m_vec_gobjects.size();
 }
 
+Camera* Game::getCamera() {
+    return m_camera;
+}
+
+void Game::setCamera(Camera* cam) {
+    if (default_camera) {
+        delete m_camera;
+        m_camera = nullptr;
+    }
+
+    if (!cam) {
+        m_camera = new Camera();
+    }
+    else {
+        m_camera = cam;
+    }
+
+    default_camera = !cam;
+}
+
 void Game::update() {
     // update mvps, etc.
+    m_camera->update();
+
+    for (int i = 0; i < getNumObjectsInScene(); ++i) {
+        getObjectFromScene(i)->getMaterial()->getShaderProgram()->setVariable("transform", &VariableMat4(
+            m_camera->getProjection() * m_camera->getView() * getObjectFromScene(i)->getTransform()
+        ));
+    }
 }
 
 void Game::render() {
