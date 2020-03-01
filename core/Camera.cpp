@@ -76,7 +76,7 @@ glm::mat4 Camera::getProjection() {
 }
 
 void Camera::update() {
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	m_view = glm::lookAt(m_position, m_position + cameraFront, m_up);
 	m_projection = glm::perspective(glm::radians(m_fov), Engine::get()->getWindowWidth() / (float) Engine::get()->getWindowHeight(), m_znear, m_zfar);
