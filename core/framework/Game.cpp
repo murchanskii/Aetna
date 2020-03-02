@@ -17,38 +17,50 @@ Game::~Game() {
     }
 }
 
-void Game::addObjectToScene(Object *obj) {
-    GameObject gobject;
-    gobject.object = obj;
+void Game::addEntityToScene(Entity *ent) {
+    GameEntity gentity;
+    gentity.entity = ent;
 
-    m_vec_gobjects.push_back(gobject);
-    Engine::get()->getRenderer()->addObjectToRender(obj);
+    m_vec_gents.push_back(gentity);
+
+    Object* obj = dynamic_cast<Object*>(ent);
+    if (obj) {
+        Engine::get()->getRenderer()->addObjectToRender(obj);
+    }
 }
 
-void Game::removeObjectFromScene(int num) {
-    m_vec_gobjects.erase(m_vec_gobjects.begin() + num);
-    Engine::get()->getRenderer()->removeObjectFromRender(getObjectFromScene(num));
+void Game::removeEntityFromScene(int num) {
+    m_vec_gents.erase(m_vec_gents.begin() + num);
+
+    Object* obj = dynamic_cast<Object*>(getEntityFromScene(num));
+    if (obj) {
+        Engine::get()->getRenderer()->removeObjectFromRender(obj);
+    }
 }
 
-void Game::removeObjectFromScene(Object *obj) {
-    for (int i = 0; i < getNumObjectsInScene(); ++i) {
-        if (m_vec_gobjects[i].object == obj) {
-            m_vec_gobjects.erase(m_vec_gobjects.begin() + i);
+void Game::removeEntityFromScene(Entity *ent) {
+    for (int i = 0; i < getNumEntitiesInScene(); ++i) {
+        if (m_vec_gents[i].entity == ent) {
+            m_vec_gents.erase(m_vec_gents.begin() + i);
         }
     }
-    Engine::get()->getRenderer()->removeObjectFromRender(obj);
+
+    Object* obj = dynamic_cast<Object*>(ent);
+    if (obj) {
+        Engine::get()->getRenderer()->removeObjectFromRender(obj);
+    }
 }
 
-Object *Game::getObjectFromScene(int num) {
-    return m_vec_gobjects[num].object;
+Entity *Game::getEntityFromScene(int num) {
+    return m_vec_gents[num].entity;
 }
 
-int Game::findObjectInScene(const char *name) {
+int Game::findEntityInScene(const char *name) {
     return -1;
 }
 
-int Game::getNumObjectsInScene() {
-    return m_vec_gobjects.size();
+int Game::getNumEntitiesInScene() {
+    return m_vec_gents.size();
 }
 
 Camera* Game::getCamera() {
@@ -74,13 +86,13 @@ void Game::setCamera(Camera* cam) {
 void Game::update() {
     m_camera->update();
     
-    for (int i = 0; i < getNumObjectsInScene(); ++i) {
-        getObjectFromScene(i)->update();
+    for (int i = 0; i < getNumEntitiesInScene(); ++i) {
+        getEntityFromScene(i)->update();
     }
 }
 
 void Game::render() {
-    for (GameObject gobject : m_vec_gobjects) {
+    for (GameEntity gobject : m_vec_gents) {
 
     }
 }

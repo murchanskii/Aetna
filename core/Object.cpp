@@ -4,21 +4,17 @@
 
 #include "Object.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+Object::Object() : Entity(), m_mesh(nullptr), m_material(nullptr) {
 
-Object::Object() : m_mesh(nullptr), m_material(nullptr), m_parent(nullptr) {
-    setTransform(glm::mat4(1.0f));
 }
 
-Object::Object(Mesh *t_mesh) : m_material(nullptr), m_parent(nullptr) {
+Object::Object(Mesh *t_mesh) : Entity(), m_material(nullptr) {
     m_mesh = t_mesh;
-    setTransform(glm::mat4(1.0f));
 }
 
-Object::Object(Mesh* t_mesh, Material* t_material) : m_parent(nullptr) {
+Object::Object(Mesh* t_mesh, Material* t_material) : Entity() {
     m_mesh = t_mesh;
     m_material = t_material;
-    setTransform(glm::mat4(1.0f));
 }
 
 Object::~Object() {
@@ -27,22 +23,6 @@ Object::~Object() {
 
 void Object::setMesh(Mesh *t_mesh) {
     m_mesh = t_mesh;
-}
-
-glm::mat4 Object::getTransform() {
-    return m_model;
-}
-
-void Object::setTransform(glm::mat4 t_transform) {
-    m_model = t_transform;
-}
-
-glm::vec3 Object::getPosition() {
-    return glm::vec3(m_model[3].x, m_model[3].y, m_model[3].z);
-}
-
-void Object::setPosition(glm::vec3 pos) {
-    m_model = glm::translate(glm::mat4(1.0f), pos);
 }
 
 Material* Object::getMaterial() {
@@ -63,22 +43,6 @@ bool Object::isEnabled() {
 
 Mesh *Object::getMesh() {
     return m_mesh;
-}
-
-void Object::setParent(Object *parent) {
-
-}
-
-Object *Object::getParent() {
-    return nullptr;
-}
-
-void Object::addChild(Object *child) {
-
-}
-
-Object *Object::getChild(int num) {
-    return nullptr;
 }
 
 void Object::update() {

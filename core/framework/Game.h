@@ -5,11 +5,13 @@
 #ifndef AETNA_GAME_H
 #define AETNA_GAME_H
 
-#include "../Object.h"
+#include "../Entity.h"
 #include "../Camera.h"
 
+#include <vector>
+
 class Camera;
-class Object;
+class Entity;
 
 class Game {
 public:
@@ -21,12 +23,12 @@ public:
     Game(Game const&) = delete;
     Game& operator=(Game const&) = delete;
 
-    int getNumObjectsInScene();
-    void addObjectToScene(Object *obj);
-    void removeObjectFromScene(int num);
-    void removeObjectFromScene(Object *obj);
-    Object *getObjectFromScene(int num);
-    int findObjectInScene(const char *name);
+    int getNumEntitiesInScene();
+    void addEntityToScene(Entity *ent);
+    void removeEntityFromScene(int num);
+    void removeEntityFromScene(Entity*ent);
+    Entity *getEntityFromScene(int num);
+    int findEntityInScene(const char *name);
 
     Camera* getCamera();
     void setCamera(Camera* cam);
@@ -38,14 +40,14 @@ private:
     Game();
     virtual ~Game();
 
-    struct GameObject {
-        Object *object;
+    struct GameEntity {
+        Entity *entity;
     };
 
     Camera* m_camera;
     bool default_camera;
 
-    std::vector<GameObject> m_vec_gobjects;
+    std::vector<GameEntity> m_vec_gents;
 };
 
 

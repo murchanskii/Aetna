@@ -34,6 +34,8 @@ add_executable(Aetna
         core/Material.cpp
         core/Mesh.h
         core/Mesh.cpp
+        core/Entity.h
+        core/Entity.cpp
         core/Object.h
         core/Object.cpp
         core/Camera.h

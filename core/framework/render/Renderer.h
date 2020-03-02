@@ -27,16 +27,16 @@ public:
     virtual void swap() = 0;
 
 protected:
-    friend void Game::addObjectToScene(Object *obj);
-    friend void Game::removeObjectFromScene(Object *obj);
-    friend void Game::removeObjectFromScene(int num);
+    friend void Game::addEntityToScene(Entity *ent);
+    friend void Game::removeEntityFromScene(Entity *ent);
+    friend void Game::removeEntityFromScene(int num);
     friend void Game::render();
 
     Renderer() {}
     virtual ~Renderer()  {}
-
-    virtual void addObjectToRender(Object *obj) = 0;
-    virtual void removeObjectFromRender(Object *obj) = 0;
+    
+    virtual void addObjectToRender(Object* obj) = 0;
+    virtual void removeObjectFromRender(Object* obj) = 0;
     virtual void removeObjectFromRender(int id) = 0;
     virtual void renderObjects() = 0;
 

@@ -18,11 +18,11 @@ void MainScript::initialize() {
 	material = new Material();
     cube = new Object(cube_mesh, material);
 
-    Game::get()->addObjectToScene(cube);
+    Game::get()->addEntityToScene(cube);
 
     player = new PlayerFree();
     Game::get()->setCamera(player->getCamera());
-    Game::get()->addObjectToScene(player);
+    Game::get()->addEntityToScene(player);
 
     player->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
 }
