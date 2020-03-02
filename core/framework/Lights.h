@@ -12,9 +12,9 @@ protected:
 
 	Light() : Entity(), 
 			m_color(glm::vec4(1.0f)), 
-			m_ambient(glm::vec4(0.0f)),
-			m_diffuse(glm::vec4(0.0f)),
-			m_specular(glm::vec4(0.0f)) {
+			m_ambient(glm::vec4(0.4f)),
+			m_diffuse(glm::vec4(0.4f)),
+			m_specular(glm::vec4(0.3f)) {
 
 	}
 	virtual ~Light() {

@@ -65,7 +65,7 @@ vec3 calc_light_point(LightPoint light, vec3 normal, vec3 frag_pos, vec3 view_di
     float diffuse_shading = max(dot(normal, light_dir), 0.0f);
 
     vec3 reflect_direction = reflect(-light_dir, normal);
-    float specular_shading = 0.1f;//pow(max(dot(view_dir, reflect_direction), 0.0f), material.shininess);
+    float specular_shading = 0.3f;//pow(max(dot(view_dir, reflect_direction), 0.0f), material.shininess);
 
     float distance = length(light.position - fPosition);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * distance * distance);
