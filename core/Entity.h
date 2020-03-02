@@ -22,6 +22,12 @@ public:
 
     virtual glm::vec3 getPosition();
     virtual void setPosition(glm::vec3 pos);
+
+    virtual glm::quat getRotation();
+    virtual void setRotation(glm::quat rot);
+
+    virtual glm::vec3 getScale();
+    virtual void setScale(glm::vec3 scale);
     
     virtual void setEnabled(bool enabled);
     virtual bool isEnabled();
