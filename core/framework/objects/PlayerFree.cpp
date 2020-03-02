@@ -39,7 +39,7 @@ void PlayerFree::update() {
 		last_mouse_x = cur_mouse_x;
 		last_mouse_y = cur_mouse_y;
 
-		float sensitivity = 0.05f;
+		float sensitivity = 0.2f;
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 

@@ -42,7 +42,12 @@ private:
 
     struct GameEntity {
         Entity *entity;
+        bool is_light = false;
     };
+
+    std::vector<int> m_vec_light_dir_indices;
+    std::vector<int> m_vec_light_point_indices;
+    std::vector<int> m_vec_light_spot_indices;
 
     Camera* m_camera;
     bool default_camera;

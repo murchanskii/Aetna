@@ -9,6 +9,7 @@
 #include "core/Mesh.h"
 #include "core/Object.h"
 #include "core/framework/objects/PlayerFree.h"
+#include "core/framework/Lights.h"
 
 class MainScript : public Script {
 public:
@@ -21,6 +22,9 @@ private:
     Mesh *cube_mesh;
     Object *cube;
 	Material* material;
+
+    LightDirectional* light_dir;
+    LightPoint* light_point;
 
     PlayerFree* player;
 };

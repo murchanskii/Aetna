@@ -47,6 +47,7 @@ add_executable(Aetna
         core/framework/Engine.h 
         core/framework/Controls.cpp
         core/framework/Controls.h 
+        core/framework/Lights.h 
 		core/framework/Script.h 
 		MainScript.cpp 
 		MainScript.h 
