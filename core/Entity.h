@@ -28,6 +28,18 @@ public:
 
     virtual glm::vec3 getScale();
     virtual void setScale(glm::vec3 scale);
+
+    virtual glm::mat4 getWorldTransform();
+    virtual void setWorldTransform(glm::mat4 t_transform);
+
+    virtual glm::vec3 getWorldPosition();
+    virtual void setWorldPosition(glm::vec3 pos);
+
+    virtual glm::quat getWorldRotation();
+    virtual void setWorldRotation(glm::quat rot);
+
+    virtual glm::vec3 getWorldScale();
+    virtual void setWorldScale(glm::vec3 scale);
     
     virtual void setEnabled(bool enabled);
     virtual bool isEnabled();
