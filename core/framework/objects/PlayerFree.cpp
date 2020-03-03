@@ -84,6 +84,12 @@ void PlayerFree::update() {
 	if (Controls::get()->getKeyState(Controls::Keys::KEY_D, Controls::States::KEY_PRESS)) {
 		pos += speed * glm::normalize(glm::cross(view_dir, m_camera->getUp()));
 	}
+	if (Controls::get()->getKeyState(Controls::Keys::KEY_Q, Controls::States::KEY_PRESS)) {
+		pos -= speed * m_camera->getUp();
+	}
+	if (Controls::get()->getKeyState(Controls::Keys::KEY_E, Controls::States::KEY_PRESS)) {
+		pos += speed * m_camera->getUp();
+	}
 
 	setPosition(pos);
 }
