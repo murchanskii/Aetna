@@ -176,9 +176,9 @@ glm::vec3 Entity::getWorldScale() {
     if (m_parent) {
         glm::mat4 world_transform = getWorldTransform();
         return glm::vec3(
-            glm::length(glm::vec3(m_model[0].x, m_model[0].y, m_model[0].z)),
-            glm::length(glm::vec3(m_model[1].x, m_model[1].y, m_model[1].z)),
-            glm::length(glm::vec3(m_model[2].x, m_model[2].y, m_model[2].z))
+            glm::length(glm::vec3(world_transform[0].x, world_transform[0].y, world_transform[0].z)),
+            glm::length(glm::vec3(world_transform[1].x, world_transform[1].y, world_transform[1].z)),
+            glm::length(glm::vec3(world_transform[2].x, world_transform[2].y, world_transform[2].z))
         );
     }
     return getScale();
