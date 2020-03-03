@@ -96,7 +96,12 @@ glm::mat4 Entity::getWorldTransform() {
 }
 
 void Entity::setWorldTransform(glm::mat4 t_transform) {
-
+    if (m_parent) {
+        m_model = t_transform * glm::inverse(m_parent->getWorldTransform());
+    }
+    else {
+        setTransform(t_transform);
+    }
 }
 
 glm::vec3 Entity::getWorldPosition() {
@@ -108,7 +113,15 @@ glm::vec3 Entity::getWorldPosition() {
 }
 
 void Entity::setWorldPosition(glm::vec3 pos) {
-
+    if (m_parent) {
+        glm::mat4 new_model = glm::mat4(1.0f);
+        new_model = glm::translate(new_model, pos) * glm::mat4_cast(getWorldRotation());
+        new_model = glm::scale(new_model, getWorldScale());
+        setWorldTransform(new_model);
+    }
+    else {
+        setPosition(pos);
+    }
 }
 
 glm::quat Entity::getWorldRotation() {
@@ -149,6 +162,14 @@ glm::quat Entity::getWorldRotation() {
 }
 
 void Entity::setWorldRotation(glm::quat rot) {
+    if (m_parent) {
+        glm::mat4 new_model = glm::mat4(1.0f);
+        new_model = glm::translate(new_model, getWorldPosition()) * glm::mat4_cast(rot);
+        new_model = glm::scale(new_model, getWorldScale());
+        setWorldTransform(new_model);
+    } else {
+        setRotation(rot);
+    }
 }
 
 glm::vec3 Entity::getWorldScale() {
@@ -164,6 +185,15 @@ glm::vec3 Entity::getWorldScale() {
 }
 
 void Entity::setWorldScale(glm::vec3 scale) {
+    if (m_parent) {
+        glm::mat4 new_model = glm::mat4(1.0f);
+        new_model = glm::translate(new_model, getWorldPosition()) * glm::mat4_cast(getWorldRotation());
+        new_model = glm::scale(new_model, scale);
+        setWorldTransform(new_model);
+    }
+    else {
+        setScale(scale);
+    }
 }
 
 void Entity::setEnabled(bool enabled) {

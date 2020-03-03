@@ -111,7 +111,10 @@ void MainScript::initialize() {
     material2 = new Material();
     material2->getShaderProgram()->setVariable("object_color", &VariableVec4(glm::vec4(1.0f)));
     cube2 = new Object(cube_mesh, material2);
+    cube2->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
     Game::get()->addEntityToScene(cube2);
+
+    cube->addChild(cube2);
 
     player = new PlayerFree();
     Game::get()->setCamera(player->getCamera());
@@ -133,9 +136,10 @@ void MainScript::update() {
     //std::cout << "mainscript is updated" << std::endl;
     process_input();
 
-    float angle = Engine::get()->getTime() * 100.0f;
-    cube->setRotation(glm::quat(cos(glm::radians(angle / 2)), 0, sin(glm::radians(angle / 2)) * 1.0f, 0));
-    cube2->setRotation(player->getRotation());
+    float speed = Engine::get()->getTime() * 100.0f;
+    //cube->setPosition(glm::vec3(1.0f, glm::sin(speed), 0.0f));
+    cube->setRotation(glm::quat(cos(glm::radians(speed / 2)), 0, sin(glm::radians(speed / 2)) * 1.0f, 0));
+    //cube2->setRotation(player->getRotation());
     light_point->setPosition(player->getPosition());
 }
 
