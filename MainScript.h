@@ -23,10 +23,15 @@ private:
     Object *cube;
 	Material* material;
 
+    Object* cube2;
+    Material* material2;
+
     LightDirectional* light_dir;
     LightPoint* light_point;
 
     PlayerFree* player;
+
+    void process_input();
 };
 
 
