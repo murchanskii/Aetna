@@ -97,7 +97,7 @@ glm::mat4 Entity::getWorldTransform() {
 
 void Entity::setWorldTransform(glm::mat4 t_transform) {
     if (m_parent) {
-        m_model = t_transform * glm::inverse(m_parent->getWorldTransform());
+        m_model = glm::inverse(m_parent->getWorldTransform()) * t_transform;
     }
     else {
         setTransform(t_transform);
@@ -206,7 +206,9 @@ bool Entity::isEnabled() {
 
 
 void Entity::setParent(Entity* parent) {
+    glm::mat4 old_transform = getWorldTransform();
     m_parent = parent;
+    setWorldTransform(old_transform);
 }
 
 Entity* Entity::getParent() {
