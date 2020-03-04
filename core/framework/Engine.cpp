@@ -29,12 +29,28 @@ void Engine::initialize(int argc, char **argv) {
 
     process_args(argc, argv);
 
-    if (window_width == 0) {
-        window_width = 800;
+    int w_w = 0, w_h = 0;
+    int w_w_index = findArg("-w_w");
+    if (w_w_index < 0) {
+        w_w_index = findArg("--window_width");
     }
-    if (window_height == 0) {
-        window_height = 600;
+    if (w_w_index < 0) {
+        w_w = 800;
     }
+    else {
+        w_w = getArgInt(w_w_index + 1);
+    }
+
+    int w_h_index = findArg("-w_h");
+    if (w_h_index < 0) {
+        w_h_index = findArg("--window_height");
+    }
+    if (w_w_index < 0) {
+        w_h = 600;
+    } else {
+        w_h = getArgInt(w_h_index + 1);
+    }
+
     if (window_title.empty()) {
         window_title = "Aetna";
     }
@@ -48,7 +64,7 @@ void Engine::initialize(int argc, char **argv) {
             return;
     }
 
-    m_renderer->initialize(window_width, window_height, window_title.c_str());
+    m_renderer->initialize(w_w, w_h, window_title.c_str());
     m_renderer->setVerticalSync(vsync_val);
 
     switch (renderer_type) {
@@ -174,11 +190,19 @@ int Engine::getFpsCount()
 }
 
 int Engine::getWindowWidth() {
-    return window_width;
+    return m_renderer->getWindowWidth();
 }
 
 int Engine::getWindowHeight() {
-    return window_height;
+    return  m_renderer->getWindowHeight();
+}
+
+void Engine::setWindowWidth(int width) {
+    resize_window(width, getWindowHeight());
+}
+
+void Engine::setWindowHeight(int height) {
+    resize_window(getWindowWidth(), height);
 }
 
 void Engine::process_args(int argc, char **argv) {
@@ -218,7 +242,7 @@ void Engine::process_args(int argc, char **argv) {
 
             int window_w = std::atoi(argv[i + 1]);
             if (window_w > 0) {
-                window_width = window_w;
+                setWindowWidth(window_w);
             }
             else {
                 std::cerr << ignore_arg_msg(app_args[i]);
@@ -229,7 +253,7 @@ void Engine::process_args(int argc, char **argv) {
 
             int window_h = std::atoi(argv[i + 1]);
             if (window_h > 0) {
-                window_height = window_h;
+                setWindowHeight(window_h);
             }
             else {
                 std::cerr << ignore_arg_msg(app_args[i]);
@@ -254,6 +278,12 @@ void Engine::process_args(int argc, char **argv) {
     std::cerr << std::endl;
 }
 
+void Engine::resize_window(int w, int h) {
+    if (m_renderer) {
+        m_renderer->resizeWindow(w, h);
+    }
+}
+
 Renderer *Engine::getRenderer() {
     return m_renderer;
 }
@@ -268,6 +298,14 @@ float Engine::getArgFloat(int index) {
 
 const char* Engine::getArg(int index) {
     return app_args[index];
+}
+
+int Engine::findArg(const char* name) {
+    std::vector<const char*>::iterator it = std::find(app_args.begin(), app_args.end(), name);
+    if (it != app_args.end()) {
+        return it - app_args.begin();
+    }
+    return -1;
 }
 
 int Engine::getNumArgs() {

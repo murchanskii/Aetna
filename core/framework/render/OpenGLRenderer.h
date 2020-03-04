@@ -40,6 +40,10 @@ protected:
     void removeObjectFromRender(int id) override;
     void renderObjects() override;
 
+    void resizeWindow(int width, int height) override;
+    int getWindowWidth() override;
+    int getWindowHeight() override;
+
 private:
     OpenGLRenderer();
     ~OpenGLRenderer() override;
@@ -48,6 +52,8 @@ private:
 
     GLFWwindow *m_main_window = nullptr;
     std::vector<OpenGLObject*> m_vec_gl_objects;
+
+    static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 };
 
 

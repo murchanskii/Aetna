@@ -91,5 +91,5 @@ glm::mat4 Camera::getProjection() {
 
 void Camera::update() {
 	m_view = glm::lookAt(m_position, m_position + m_direction, m_up);
-	m_projection = glm::perspective(glm::radians(m_fov), Engine::get()->getWindowWidth() / (float) Engine::get()->getWindowHeight(), m_znear, m_zfar);
+	m_projection = glm::perspective(glm::radians(m_fov), (float) Engine::get()->getWindowWidth() / (float) Engine::get()->getWindowHeight(), m_znear, m_zfar);
 }

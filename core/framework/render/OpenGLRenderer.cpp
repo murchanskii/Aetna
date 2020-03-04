@@ -15,6 +15,13 @@ OpenGLRenderer::~OpenGLRenderer() {
 
 }
 
+void OpenGLRenderer::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+    glScissor(0, 0, width, height);
+    
+    OpenGLRenderer::get()->render();
+}
+
 void OpenGLRenderer::initialize(int window_w, int window_h, const char *window_t) {
     if (!glfwInit()) {
         std::cout << "Failed to init GLFW" << std::endl;
@@ -38,6 +45,8 @@ void OpenGLRenderer::initialize(int window_w, int window_h, const char *window_t
     int w_w = 0, w_h = 0;
     glfwGetWindowSize(m_main_window, &w_w, &w_h);
     glViewport(0, 0, window_w, window_h);
+
+    glfwSetFramebufferSizeCallback(m_main_window, framebuffer_size_callback);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -160,4 +169,20 @@ void OpenGLRenderer::renderObjects() {
             glBindVertexArray(0);
         }
     }
+}
+
+void OpenGLRenderer::resizeWindow(int width, int height) {
+    glfwSetWindowSize(m_main_window, width, height);
+}
+
+int OpenGLRenderer::getWindowWidth() {
+    int width = 0, height = 0;
+    glfwGetWindowSize(m_main_window, &width, &height);
+    return width;
+}
+
+int OpenGLRenderer::getWindowHeight() {
+    int width = 0, height = 0;
+    glfwGetWindowSize(m_main_window, &width, &height);
+    return height;
 }

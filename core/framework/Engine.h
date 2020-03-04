@@ -13,6 +13,8 @@
 #include <string>
 #include <chrono>
 
+class Renderer;
+
 class Engine {
 public:
     static Engine *get()
@@ -37,6 +39,8 @@ public:
 
     int getWindowWidth();
     int getWindowHeight();
+    void setWindowWidth(int width);
+    void setWindowHeight(int height);
 
     bool isInitialized();
     Renderer *getRenderer();
@@ -44,6 +48,7 @@ public:
     int getArgInt(int index);
     float getArgFloat(int index);
     const char *getArg(int index);
+    int findArg(const char* name);
     int getNumArgs();
 
 private:
@@ -62,8 +67,6 @@ private:
         DIRECT3D
     } renderer_type = RendererType::OPENGL;
 
-    int window_width = 0;
-    int window_height = 0;
     std::string window_title;
 
     int vsync_val = 0;
@@ -75,7 +78,8 @@ private:
     void terminate();
 
     void process_args(int argc, char **argv);
-
+    void resize_window(int w, int h);
+    
     std::vector<const char*> app_args;
 };
 

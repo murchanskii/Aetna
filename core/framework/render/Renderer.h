@@ -7,6 +7,7 @@
 
 #include "../Game.h"
 #include "../../Object.h"
+#include "../Engine.h"
 
 class Renderer {
 public:
@@ -32,6 +33,8 @@ protected:
     friend void Game::removeEntityFromScene(int num);
     friend void Game::render();
 
+    friend class Engine;
+
     Renderer() {}
     virtual ~Renderer()  {}
     
@@ -39,6 +42,10 @@ protected:
     virtual void removeObjectFromRender(Object* obj) = 0;
     virtual void removeObjectFromRender(int id) = 0;
     virtual void renderObjects() = 0;
+
+    virtual void resizeWindow(int width, int height) = 0;
+    virtual int getWindowHeight() = 0;
+    virtual int getWindowWidth() = 0;
 
 private:
     bool m_is_initialized = false;
