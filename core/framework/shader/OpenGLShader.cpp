@@ -18,6 +18,8 @@ OpenGLShader::OpenGLShader(const char* path, Type type) : Shader(path, type) {
 		shader_file.close();
 	} else {
 		std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		id = -1;
+		return;
 	}
 
 	int shader_type = -1;

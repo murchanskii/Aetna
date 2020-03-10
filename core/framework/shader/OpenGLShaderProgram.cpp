@@ -36,6 +36,11 @@ OpenGLShaderProgram::~OpenGLShaderProgram() {
 
 void OpenGLShaderProgram::setVertexShader(const char *path) {
     m_vertex_shader = new OpenGLShader(path, OpenGLShader::Type::VERTEX);
+	if (m_vertex_shader->getID() < 0) {
+		delete m_vertex_shader;
+		m_vertex_shader = nullptr;
+		return;
+	}
     glAttachShader(m_program_id, m_vertex_shader->getID());
 
     if (m_fragment_shader && m_fragment_shader->getID() > 0) {
@@ -46,6 +51,11 @@ void OpenGLShaderProgram::setVertexShader(const char *path) {
 
 void OpenGLShaderProgram::setFragmentShader(const char *path) {
     m_fragment_shader = new OpenGLShader(path, OpenGLShader::Type::FRAGMENT);
+	if (m_fragment_shader->getID() < 0) {
+		delete m_fragment_shader;
+		m_fragment_shader = nullptr;
+		return;
+	}
     glAttachShader(m_program_id, m_fragment_shader->getID());
 
     if (m_vertex_shader && m_vertex_shader->getID() > 0) {

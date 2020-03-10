@@ -1,16 +1,31 @@
 #include "Material.h"
 #include "framework/shader/OpenGLShaderProgram.h"
 #include "framework/Utils.h"
+#include "framework/Engine.h"
 
 #include <pugixml.hpp>
 
 #include <iostream>
 
-Material::Material() : name("") {
+Material* Material::create(const char* name)
+{	
+	Material *ref_mat = Engine::get()->getRenderer()->getMaterial(name);
+	Material* mat = new Material(ref_mat->getPath().c_str());
+	mat->setName(ref_mat->getName());
+	return mat;
+}
+
+Material::Material(const char* path) : m_name("") {
+	m_path = path;
 	default_shader_program_used = true;
 	m_shader_program = new OpenGLShaderProgram();
 
-	load((Utils::getPathToCore() + "../materials/base_material.mat").c_str());
+	int load_res = load(path);
+	if (load_res < 0) {
+		delete m_shader_program;
+		m_shader_program = nullptr;
+		default_shader_program_used = false;
+	}
 }
 
 Material::~Material() {
@@ -31,7 +46,7 @@ void Material::setShaderProgram(ShaderProgram* shdr_prog) {
 void Material::save(const char* path) {
 	pugi::xml_document mat_xml;
 	pugi::xml_node xml_node_material = mat_xml.append_child("material");
-	xml_node_material.append_attribute("name").set_value(name.c_str());
+	xml_node_material.append_attribute("name").set_value(m_name.c_str());
 	pugi::xml_node xml_node_vertex_shdr = xml_node_material.append_child("shader");
 	xml_node_vertex_shdr.append_attribute("type").set_value("vertex");
 	if (m_shader_program->isVertexShaderBinded()) {
@@ -67,20 +82,38 @@ void Material::save(const char* path) {
 	mat_xml.save_file(path);
 }
 
-void Material::load(const char* path) {
+int Material::load(const char* path) {
+	if (!m_shader_program) {
+		m_shader_program = new OpenGLShaderProgram();
+		default_shader_program_used = true;
+	}
+	auto remove_shader_program = [&]() {
+		delete m_shader_program;
+		m_shader_program = nullptr;
+		default_shader_program_used = false; 
+	};
+
 	pugi::xml_document mat_xml;
 	pugi::xml_parse_result xml_res = mat_xml.load_file(path);
 	if (xml_res && m_shader_program) {
 		pugi::xml_node xml_node_material = mat_xml.child("material");
 		if (xml_node_material) {
-			name = std::string(xml_node_material.attribute("name").value());
+			m_name = std::string(xml_node_material.attribute("name").value());
 			pugi::xml_node xml_node_vertex_shader = xml_node_material.find_child_by_attribute("shader", "type", "vertex");
 			if (xml_node_vertex_shader) {
 				m_shader_program->setVertexShader((Utils::getPathToCore() + xml_node_vertex_shader.attribute("path").value()).c_str());
+				if (strcmp(m_shader_program->getVertexShaderPath(), "") == 0) {
+					remove_shader_program();
+					return -1;
+				}
 			}
 			pugi::xml_node xml_node_fragment_shader = xml_node_material.find_child_by_attribute("shader", "type", "fragment");
 			if (xml_node_fragment_shader) {
 				m_shader_program->setFragmentShader((Utils::getPathToCore() + xml_node_fragment_shader.attribute("path").value()).c_str());
+				if (strcmp(m_shader_program->getFragmentShaderPath(), "") == 0) {
+					remove_shader_program();
+					return -1;
+				}
 			}
 
 			for (pugi::xml_node variable_node = xml_node_material.child("variable");
@@ -88,8 +121,26 @@ void Material::load(const char* path) {
 				variable_node = variable_node.next_sibling("variable")) {
 				parseXmlVariable(variable_node);
 			}
+			return 1;
 		}
 	}
+	remove_shader_program();
+	return -1;
+}
+
+void Material::setName(std::string name)
+{
+	m_name = name;
+}
+
+std::string Material::getName()
+{
+	return m_name;
+}
+
+std::string Material::getPath()
+{
+	return m_path;
 }
 
 void Material::apply() {

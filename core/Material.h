@@ -7,21 +7,28 @@
 
 class Material {
 public:
-	Material();
+	static Material* create(const char *name);
+
+	explicit Material(const char *path);
 	~Material();
 
 	ShaderProgram *getShaderProgram();
 	void setShaderProgram(ShaderProgram* shdr_prog);
 
 	void save(const char *path);
-	void load(const char *path);
+	int load(const char *path);
+
+	void setName(std::string name);
+	std::string getName();
+	std::string getPath();
 
 	void apply();
 private:
 	ShaderProgram* m_shader_program;
 	bool default_shader_program_used;
 
-	std::string name;
+	std::string m_name;
+	std::string m_path;
 
 	std::string getStringVariable(Variable *variable);
 	void parseXmlVariable(pugi::xml_node variable_node);
