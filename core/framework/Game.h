@@ -23,12 +23,15 @@ public:
     Game(Game const&) = delete;
     Game& operator=(Game const&) = delete;
 
+    void saveScene(const char *path);
+
     int getNumEntitiesInScene();
     void addEntityToScene(Entity *ent);
     void removeEntityFromScene(int num);
     void removeEntityFromScene(Entity*ent);
     Entity *getEntityFromScene(int num);
     int findEntityInScene(const char *name);
+    int findEntityInScene(Entity *entity);
 
     Camera* getCamera();
     void setCamera(Camera* cam);

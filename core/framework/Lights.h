@@ -20,8 +20,11 @@ protected:
 	virtual ~Light() {
 
 	}
-
 public:
+	const char* getTypeName() override {
+		return "Light";
+	}
+
 	virtual void setColor(glm::vec4 color) {
 		m_color = color;
 	}
@@ -58,6 +61,10 @@ public:
 	LightDirectional() : Light(), m_direction(glm::vec3(0.0f)) {
 
 	}
+	
+	const char* getTypeName() override {
+		return "LightDirectional";
+	}
 
 	virtual void setDirection(glm::vec3 dir) {
 		m_direction = dir;
@@ -77,6 +84,10 @@ protected:
 public:
 	LightPoint() : Light(), m_constant(1.0f), m_linear(0.14f), m_quadratic(0.07f) {
 
+	}
+
+	const char* getTypeName() override {
+		return "LightPoint";
 	}
 
 	void setConstant(float constant) {
@@ -107,6 +118,10 @@ protected:
 public:
 	LightSpot() : Light() {
 
+	}
+
+	const char* getTypeName() override {
+		return "LightSpot";
 	}
 };
 

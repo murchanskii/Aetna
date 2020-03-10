@@ -16,6 +16,8 @@ public:
     Object(Mesh* t_mesh, Material* t_material);
     virtual ~Object();
 
+    const char* getTypeName() override;
+
     virtual Mesh *getMesh();
     virtual void setMesh(Mesh *t_mesh);
     

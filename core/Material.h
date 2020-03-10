@@ -13,6 +13,9 @@ public:
 	ShaderProgram *getShaderProgram();
 	void setShaderProgram(ShaderProgram* shdr_prog);
 
+	std::string getName();
+	void setName(std::string name);
+
 	void save(const char *path);
 	void load(const char *path);
 
@@ -21,7 +24,7 @@ private:
 	ShaderProgram* m_shader_program;
 	bool default_shader_program_used;
 
-	std::string name;
+	std::string m_name;
 
 	std::string getStringVariable(Variable *variable);
 	void parseXmlVariable(pugi::xml_node variable_node);

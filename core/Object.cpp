@@ -21,6 +21,10 @@ Object::~Object() {
 
 }
 
+const char* Object::getTypeName() {
+    return "Object";
+}
+
 void Object::setMesh(Mesh *t_mesh) {
     m_mesh = t_mesh;
 }

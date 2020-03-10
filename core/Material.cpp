@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Material::Material() : name("") {
+Material::Material() : m_name("") {
 	default_shader_program_used = true;
 	m_shader_program = new OpenGLShaderProgram();
 
@@ -28,10 +28,18 @@ void Material::setShaderProgram(ShaderProgram* shdr_prog) {
 	m_shader_program = shdr_prog;
 }
 
+std::string Material::getName() {
+	return m_name;
+}
+
+void Material::setName(std::string name) {
+	m_name = name;
+}
+
 void Material::save(const char* path) {
 	pugi::xml_document mat_xml;
 	pugi::xml_node xml_node_material = mat_xml.append_child("material");
-	xml_node_material.append_attribute("name").set_value(name.c_str());
+	xml_node_material.append_attribute("name").set_value(m_name.c_str());
 	pugi::xml_node xml_node_vertex_shdr = xml_node_material.append_child("shader");
 	xml_node_vertex_shdr.append_attribute("type").set_value("vertex");
 	if (m_shader_program->isVertexShaderBinded()) {
@@ -73,7 +81,7 @@ void Material::load(const char* path) {
 	if (xml_res && m_shader_program) {
 		pugi::xml_node xml_node_material = mat_xml.child("material");
 		if (xml_node_material) {
-			name = std::string(xml_node_material.attribute("name").value());
+			setName(std::string(xml_node_material.attribute("name").value()));
 			pugi::xml_node xml_node_vertex_shader = xml_node_material.find_child_by_attribute("shader", "type", "vertex");
 			if (xml_node_vertex_shader) {
 				m_shader_program->setVertexShader((Utils::getPathToCore() + xml_node_vertex_shader.attribute("path").value()).c_str());
