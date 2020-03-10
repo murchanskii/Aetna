@@ -16,6 +16,11 @@ class Entity {
 public:
     Entity();
     virtual ~Entity();
+
+    virtual std::string getName();
+    virtual void setName(std::string name);
+
+    virtual const char *getTypeName();
     
     virtual glm::mat4 getTransform();
     virtual void setTransform(glm::mat4 t_transform);

@@ -9,12 +9,12 @@ class Material {
 public:
 	static Material* create(const char *name);
 
-	explicit Material(const char *path);
+	Material();
 	~Material();
 
 	ShaderProgram *getShaderProgram();
 	void setShaderProgram(ShaderProgram* shdr_prog);
-
+	
 	void save(const char *path);
 	int load(const char *path);
 

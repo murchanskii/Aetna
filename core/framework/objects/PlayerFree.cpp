@@ -12,3 +12,7 @@ PlayerFree::PlayerFree() : Player() {
 PlayerFree::~PlayerFree() {
 
 }
+
+const char* PlayerFree::getTypeName() {
+	return "PlayerFree";
+}

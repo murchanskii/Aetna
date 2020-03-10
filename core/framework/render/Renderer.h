@@ -60,7 +60,8 @@ protected:
 	void init_materials(const char* path_to_materials) {
 		for (const std::filesystem::directory_entry& entry : std::filesystem::recursive_directory_iterator(path_to_materials)) {
 			if (entry.is_regular_file() && entry.path().extension() == ".mat") {
-				Material* mat = new Material(entry.path().string().c_str());
+				Material* mat = new Material();
+				mat->load(entry.path().string().c_str());
 				if (!mat->getShaderProgram()) {
 					delete mat;
 					continue;

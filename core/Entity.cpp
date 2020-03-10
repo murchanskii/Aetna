@@ -12,6 +12,18 @@ Entity::~Entity() {
 
 }
 
+const char* Entity::getTypeName() {
+    return "Entity";
+}
+
+std::string Entity::getName() {
+    return m_name;
+}
+
+void Entity::setName(std::string name) {
+    m_name = name;
+}
+
 glm::mat4 Entity::getTransform() {
     return m_model;
 }

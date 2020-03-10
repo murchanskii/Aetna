@@ -10,17 +10,17 @@
 Material* Material::create(const char* name)
 {	
 	Material *ref_mat = Engine::get()->getRenderer()->getMaterial(name);
-	Material* mat = new Material(ref_mat->getPath().c_str());
+	Material* mat = new Material();
 	mat->setName(ref_mat->getName());
+	mat->load(ref_mat->getPath().c_str());
 	return mat;
 }
 
-Material::Material(const char* path) : m_name("") {
-	m_path = path;
+Material::Material() : m_name("") {
 	default_shader_program_used = true;
 	m_shader_program = new OpenGLShaderProgram();
 
-	int load_res = load(path);
+	int load_res = load((Utils::getPathToCore() + "../materials/base_material.mat").c_str());
 	if (load_res < 0) {
 		delete m_shader_program;
 		m_shader_program = nullptr;
@@ -41,6 +41,11 @@ ShaderProgram *Material::getShaderProgram() {
 void Material::setShaderProgram(ShaderProgram* shdr_prog) {
 	default_shader_program_used = false;
 	m_shader_program = shdr_prog;
+}
+
+std::string Material::getPath()
+{
+	return m_path;
 }
 
 void Material::save(const char* path) {
@@ -79,26 +84,30 @@ void Material::save(const char* path) {
 		xml_node_variable.append_child(pugi::node_pcdata).set_value(getStringVariable(var).c_str());
 	}
 
+	m_path = path;
 	mat_xml.save_file(path);
 }
 
 int Material::load(const char* path) {
-	if (!m_shader_program) {
-		m_shader_program = new OpenGLShaderProgram();
-		default_shader_program_used = true;
-	}
 	auto remove_shader_program = [&]() {
 		delete m_shader_program;
 		m_shader_program = nullptr;
 		default_shader_program_used = false; 
 	};
 
+	if (m_shader_program) {
+		remove_shader_program();
+	}
+
+	m_shader_program = new OpenGLShaderProgram();
+	default_shader_program_used = true;
+
 	pugi::xml_document mat_xml;
 	pugi::xml_parse_result xml_res = mat_xml.load_file(path);
 	if (xml_res && m_shader_program) {
 		pugi::xml_node xml_node_material = mat_xml.child("material");
 		if (xml_node_material) {
-			m_name = std::string(xml_node_material.attribute("name").value());
+			setName(std::string(xml_node_material.attribute("name").value()));
 			pugi::xml_node xml_node_vertex_shader = xml_node_material.find_child_by_attribute("shader", "type", "vertex");
 			if (xml_node_vertex_shader) {
 				m_shader_program->setVertexShader((Utils::getPathToCore() + xml_node_vertex_shader.attribute("path").value()).c_str());
@@ -121,6 +130,7 @@ int Material::load(const char* path) {
 				variable_node = variable_node.next_sibling("variable")) {
 				parseXmlVariable(variable_node);
 			}
+			m_path = path;
 			return 1;
 		}
 	}
@@ -136,11 +146,6 @@ void Material::setName(std::string name)
 std::string Material::getName()
 {
 	return m_name;
-}
-
-std::string Material::getPath()
-{
-	return m_path;
 }
 
 void Material::apply() {
