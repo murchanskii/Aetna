@@ -53,8 +53,6 @@ void OpenGLRenderer::initialize(int window_w, int window_h, const char *window_t
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     m_initialized = true;
-
-	init_materials(std::string(Utils::getPathToCore() + "../materials/").c_str());
 }
 
 void OpenGLRenderer::update() {

@@ -17,6 +17,8 @@ public:
     Entity();
     virtual ~Entity();
 
+    int getId();
+
     virtual std::string getName();
     virtual void setName(std::string name);
 
@@ -56,11 +58,14 @@ public:
     virtual Entity* getChild(int num);
 
 protected:
+    int m_id;
     std::string m_name;
     glm::mat4 m_model;
 
     friend class Game;
     virtual void update();
+
+    void setId(int id);
 
     bool is_enabled = true;
 

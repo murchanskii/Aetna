@@ -137,24 +137,33 @@ int OpenGLShaderProgram::get_var_index_by_name(std::string name) {
 void OpenGLShaderProgram::setVariable(std::string name, Variable* var) {
     int var_index = get_var_index_by_name(name);
     if (var_index >= 0) {
-        delete m_variables[var_index].second;
-        m_variables[var_index].second = nullptr;
-        m_variables.erase(m_variables.begin() + var_index);
+        if (var->isInt()) {
+            m_variables[var_index].second->setInt(var->getInt());
+        } else if (var->isFloat()) {
+            m_variables[var_index].second->setFloat(var->getFloat());
+        } else if (var->isVec3()) {
+            m_variables[var_index].second->setVec3(var->getVec3());
+        } else if (var->isVec4()) {
+            m_variables[var_index].second->setVec4(var->getVec4());
+        } else if (var->isMat4()) {
+            m_variables[var_index].second->setMat4(var->getMat4());
+        }
     }
+    else {
+        m_variables.push_back(std::pair<std::string, Variable*>(name, nullptr));
+        var_index = m_variables.size() - 1;
 
-    m_variables.push_back(std::pair<std::string, Variable*>(name, nullptr));
-    var_index = m_variables.size() - 1;
-
-    if (var->isInt()) {
-        m_variables[var_index].second = new VariableInt(var->getInt());
-    } else if (var->isFloat()) {
-        m_variables[var_index].second = new VariableFloat(var->getFloat());
-    } else if (var->isVec3()) {
-        m_variables[var_index].second = new VariableVec3(var->getVec3());
-    } else if (var->isVec4()) {
-        m_variables[var_index].second = new VariableVec4(var->getVec4());
-    } else if (var->isMat4()) {
-        m_variables[var_index].second = new VariableMat4(var->getMat4());
+        if (var->isInt()) {
+            m_variables[var_index].second = new VariableInt(var->getInt());
+        } else if (var->isFloat()) {
+            m_variables[var_index].second = new VariableFloat(var->getFloat());
+        } else if (var->isVec3()) {
+            m_variables[var_index].second = new VariableVec3(var->getVec3());
+        } else if (var->isVec4()) {
+            m_variables[var_index].second = new VariableVec4(var->getVec4());
+        } else if (var->isMat4()) {
+            m_variables[var_index].second = new VariableMat4(var->getMat4());
+        }
     }
 }
 

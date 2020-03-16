@@ -56,32 +56,26 @@ float Utils::stringToFloat(const char* str) {
 
 glm::vec3 Utils::stringToVec3(const char* str) {
 	glm::vec3 result = glm::vec3(0.0f);
-
-	std::string std_str = str;
-	std::string delimiter = " ";
-	std::vector<std::string> digits = Utils::splitString(std_str, delimiter);
+	std::vector<float> digits = stringToVecFloat(str);
 	if (digits.size() != 3) {
 		return result;
 	}
 
 	for (int i = 0; i < digits.size(); ++i) {
-		result[i] = Utils::stringToFloat(digits[i].c_str());
+		result[i] = digits[i];
 	}
 	return result;
 }
 
 glm::vec4 Utils::stringToVec4(const char* str) {
 	glm::vec4 result = glm::vec4(0.0f);
-
-	std::string std_str = str;
-	std::string delimiter = " ";
-	std::vector<std::string> digits = Utils::splitString(std_str, delimiter);
+	std::vector<float> digits = stringToVecFloat(str);
 	if (digits.size() != 4) {
 		return result;
 	}
 
 	for (int i = 0; i < digits.size(); ++i) {
-		result[i] = Utils::stringToFloat(digits[i].c_str());
+		result[i] = digits[i];
 	}
 	return result;
 }
@@ -89,21 +83,38 @@ glm::vec4 Utils::stringToVec4(const char* str) {
 glm::mat4 Utils::stringToMat4(const char* str)
 {
 	glm::mat4 result = glm::mat4(0.0f);
-
-	std::string std_str = str;
-	std::string delimiter = " ";
-	std::vector<std::string> digits = Utils::splitString(std_str, delimiter);
+	std::vector<float> digits = stringToVecFloat(str);
 	if (digits.size() != 4 * 4) {
 		return result;
 	}
 
 	for (int i = 0; i < 4; ++i) {
-		result[i][0] = Utils::stringToFloat(digits[i * 4 + 0].c_str());
-		result[i][1] = Utils::stringToFloat(digits[i * 4 + 1].c_str());
-		result[i][2] = Utils::stringToFloat(digits[i * 4 + 2].c_str());
-		result[i][3] = Utils::stringToFloat(digits[i * 4 + 3].c_str());
+		result[i][0] = digits[i * 4 + 0];
+		result[i][1] = digits[i * 4 + 1];
+		result[i][2] = digits[i * 4 + 2];
+		result[i][3] = digits[i * 4 + 3];
 	}
 
+	return result;
+}
+
+bool Utils::stringToBool(const char* str) {
+	if (strcmp(str, "true") == 0 ||
+		strcmp(str, "1") == 0) {
+		return true;
+	}
+	return false;
+}
+
+std::vector<float> Utils::stringToVecFloat(std::string str) {
+	std::vector<float> result;
+	size_t last = 0;
+	size_t next = 0;
+	while ((next = str.find(" ", last)) != std::string::npos) {
+		result.push_back(Utils::stringToFloat(str.substr(last, next - last).c_str()));
+		last = next + 1;
+	}
+	result.push_back(Utils::stringToFloat(str.substr(last).c_str()));
 	return result;
 }
 
@@ -148,6 +159,24 @@ std::string Utils::mat4ToString(glm::mat4 val)
 		std::to_string(val[3].y) + " " +
 		std::to_string(val[3].z) + " " +
 		std::to_string(val[3].w);
+}
+
+std::string Utils::boolToString(bool val) {
+	if (val) {
+		return "1";
+	}
+	return "0";
+}
+
+std::string Utils::vecFloatToString(std::vector<float> vec) {
+	std::string result;
+	for (int i = 0; i < vec.size(); ++i) {
+		result += Utils::floatToString(vec[i]) + " ";
+	}
+	if (!result.empty()) {
+		result = result.erase(result.length() - 1);
+	}
+	return result;
 }
 
 bool Variable::isInt() {

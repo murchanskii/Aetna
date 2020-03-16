@@ -15,11 +15,15 @@ public:
 	static glm::vec3 stringToVec3(const char* str);
 	static glm::vec4 stringToVec4(const char* str);
 	static glm::mat4 stringToMat4(const char* str);
+	static bool stringToBool(const char* str);
+	static std::vector<float> stringToVecFloat(std::string str);
 	static std::string intToString(int val);
 	static std::string floatToString(float val);
 	static std::string vec3ToString(glm::vec3 val);
 	static std::string vec4ToString(glm::vec4 val);
 	static std::string mat4ToString(glm::mat4 val);
+	static std::string boolToString(bool val);
+	static std::string vecFloatToString(std::vector<float> vec);
 };
 
 class Variable {

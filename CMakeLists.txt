@@ -61,6 +61,7 @@ add_executable(Aetna
 		core/framework/shader/OpenGLShaderProgram.h
         core/framework/Utils.cpp
         core/framework/Utils.h
+        core/framework/Materials.h
         core/framework/input/InputProxy.h
         core/framework/input/InputProxy.cpp
         core/framework/input/InputGLFW.h

@@ -6,10 +6,19 @@
 
 Entity::Entity() : m_parent(nullptr) {
     setTransform(glm::mat4(1.0f));
+    m_id = -1;
 }
 
 Entity::~Entity() {
 
+}
+
+int Entity::getId() {
+    return m_id;
+}
+
+void Entity::setId(int id) {
+    m_id = id;
 }
 
 const char* Entity::getTypeName() {

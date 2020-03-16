@@ -13,123 +13,11 @@
 #include <iostream>
 
 void MainScript::initialize() {
-    std::vector<float> vertices = {
-        -0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f, 
-         0.5f,  0.5f, -0.5f, 
-         0.5f,  0.5f, -0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-
-        -0.5f, -0.5f,  0.5f, 
-         0.5f, -0.5f,  0.5f, 
-         0.5f,  0.5f,  0.5f, 
-         0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-
-         0.5f,  0.5f,  0.5f, 
-         0.5f,  0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f,  0.5f, 
-         0.5f,  0.5f,  0.5f, 
-
-        -0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f,  0.5f, 
-         0.5f, -0.5f,  0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-
-        -0.5f,  0.5f, -0.5f, 
-         0.5f,  0.5f, -0.5f, 
-         0.5f,  0.5f,  0.5f, 
-         0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-    };
-    std::vector<float> normals = {
-         0.0f,  0.0f, -1.0f,
-         0.0f,  0.0f, -1.0f,
-         0.0f,  0.0f, -1.0f,
-         0.0f,  0.0f, -1.0f,
-         0.0f,  0.0f, -1.0f,
-         0.0f,  0.0f, -1.0f,
-
-         0.0f,  0.0f,  1.0f,
-         0.0f,  0.0f,  1.0f,
-         0.0f,  0.0f,  1.0f,
-         0.0f,  0.0f,  1.0f,
-         0.0f,  0.0f,  1.0f,
-         0.0f,  0.0f,  1.0f,
-
-         -1.0f,  0.0f,  0.0f,
-         -1.0f,  0.0f,  0.0f,
-         -1.0f,  0.0f,  0.0f,
-         -1.0f,  0.0f,  0.0f,
-         -1.0f,  0.0f,  0.0f,
-         -1.0f,  0.0f,  0.0f,
-
-         1.0f,  0.0f,  0.0f,
-         1.0f,  0.0f,  0.0f,
-         1.0f,  0.0f,  0.0f,
-         1.0f,  0.0f,  0.0f,
-         1.0f,  0.0f,  0.0f,
-         1.0f,  0.0f,  0.0f,
-
-         0.0f, -1.0f,  0.0f,
-         0.0f, -1.0f,  0.0f,
-         0.0f, -1.0f,  0.0f,
-         0.0f, -1.0f,  0.0f,
-         0.0f, -1.0f,  0.0f,
-         0.0f, -1.0f,  0.0f,
-
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f,
-         0.0f,  1.0f,  0.0f
-    };
-
-    cube_mesh = new Mesh(vertices);
-    cube_mesh->setNormals(normals);
-	material = new Material();
-    cube = new Object(cube_mesh, material);
-    cube->setScale(glm::vec3(0.5f));
-    cube->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-    Game::get()->addEntityToScene(cube);
-
-    material2 = new Material();
-    material2->getShaderProgram()->setVariable("object_color", &VariableVec4(glm::vec4(1.0f)));
-    cube2 = new Object(cube_mesh, material2);
-    cube2->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-    Game::get()->addEntityToScene(cube2);
-
-    cube->addChild(cube2);
-
-    player = new PlayerFree();
+    Game::get()->loadScene((Utils::getPathToCore() + "../scene_test.asc").c_str());
+    player = dynamic_cast<PlayerFree*>(Game::get()->getEntityFromScene(Game::get()->findEntityInSceneByName("player")));
     Game::get()->setCamera(player->getCamera());
-    Game::get()->addEntityToScene(player);
 
-    player->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
-
-    light_dir = new LightDirectional();
-    light_dir->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
-    Game::get()->addEntityToScene(light_dir);
-
-    light_point = new LightPoint();
-    light_point->setAmbient(glm::vec3(0.4f));
-    light_point->setDiffuse(glm::vec3(0.4f));
-    Game::get()->addEntityToScene(light_point);
+    cube = dynamic_cast<Object*>(Game::get()->getEntityFromScene(Game::get()->findEntityInSceneByName("cube")));
 }
 
 void MainScript::update() {
@@ -137,10 +25,7 @@ void MainScript::update() {
     process_input();
 
     float speed = Engine::get()->getTime() * 100.0f;
-    //cube->setPosition(glm::vec3(1.0f, glm::sin(speed), 0.0f));
     cube->setRotation(glm::quat(cos(glm::radians(speed / 2)), 0, sin(glm::radians(speed / 2)) * 1.0f, 0));
-    //cube2->setRotation(player->getRotation());
-    light_point->setPosition(player->getPosition());
 }
 
 void MainScript::render() {
@@ -148,14 +33,6 @@ void MainScript::render() {
 }
 
 void MainScript::terminate() {
-    delete cube;
-    delete cube2;
-    delete cube_mesh;
-	delete material;
-    delete material2;
-    delete player;
-    delete light_dir;
-    delete light_point;
     std::cout << "mainscript was terminated" << std::endl;
 }
 

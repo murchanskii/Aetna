@@ -7,8 +7,6 @@
 
 class Material {
 public:
-	static Material* create(const char *name);
-
 	Material();
 	~Material();
 
@@ -20,7 +18,6 @@ public:
 
 	void setName(std::string name);
 	std::string getName();
-	std::string getPath();
 
 	void apply();
 private:
@@ -28,10 +25,8 @@ private:
 	bool default_shader_program_used;
 
 	std::string m_name;
-	std::string m_path;
 
 	std::string getStringVariable(Variable *variable);
-	void parseXmlVariable(pugi::xml_node variable_node);
 };
 
 #endif //AETNA_MATERIAL_H

@@ -4,6 +4,7 @@
 
 #include "Engine.h"
 #include "Game.h"
+#include "Materials.h"
 #include "render/OpenGLRenderer.h"
 #include "input/InputGLFW.h"
 
@@ -55,6 +56,8 @@ void Engine::initialize(int argc, char **argv) {
         window_title = "Aetna";
     }
 
+    Materials::get()->initialize(std::string(Utils::getPathToCore() + "../materials/").c_str());
+
     switch(renderer_type) {
         case RendererType::OPENGL:
             m_renderer = OpenGLRenderer::get();
@@ -74,7 +77,7 @@ void Engine::initialize(int argc, char **argv) {
     case RendererType::DIRECT3D:
         break;
     }
-
+    
     m_is_initialized = true;
 }
 

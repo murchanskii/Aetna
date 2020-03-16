@@ -31,7 +31,8 @@ public:
     void removeEntityFromScene(int num);
     void removeEntityFromScene(Entity*ent);
     Entity *getEntityFromScene(int num);
-    int findEntityInScene(const char *name);
+    int findEntityInSceneByName(const char *name);
+    int findEntityInSceneById(int id);
     int findEntityInScene(Entity *entity);
 
     Camera* getCamera();
@@ -45,8 +46,9 @@ private:
     virtual ~Game();
 
     struct GameEntity {
-        Entity *entity;
+        Entity* entity = nullptr;
         bool is_light = false;
+        bool is_manual = false;
     };
 
     std::vector<int> m_vec_light_dir_indices;

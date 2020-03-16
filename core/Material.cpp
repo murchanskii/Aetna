@@ -1,4 +1,5 @@
 #include "Material.h"
+#include "framework/Materials.h"
 #include "framework/shader/OpenGLShaderProgram.h"
 #include "framework/Utils.h"
 #include "framework/Engine.h"
@@ -7,20 +8,11 @@
 
 #include <iostream>
 
-Material* Material::create(const char* name)
-{	
-	Material *ref_mat = Engine::get()->getRenderer()->getMaterial(name);
-	Material* mat = new Material();
-	mat->setName(ref_mat->getName());
-	mat->load(ref_mat->getPath().c_str());
-	return mat;
-}
-
-Material::Material() : m_name("") {
+Material::Material() {
 	default_shader_program_used = true;
 	m_shader_program = new OpenGLShaderProgram();
 
-	int load_res = load((Utils::getPathToCore() + "../materials/base_material.mat").c_str());
+	int load_res = load(Materials::get()->getMaterialPath("base_mat").c_str());
 	if (load_res < 0) {
 		delete m_shader_program;
 		m_shader_program = nullptr;
@@ -41,11 +33,6 @@ ShaderProgram *Material::getShaderProgram() {
 void Material::setShaderProgram(ShaderProgram* shdr_prog) {
 	default_shader_program_used = false;
 	m_shader_program = shdr_prog;
-}
-
-std::string Material::getPath()
-{
-	return m_path;
 }
 
 void Material::save(const char* path) {
@@ -84,7 +71,6 @@ void Material::save(const char* path) {
 		xml_node_variable.append_child(pugi::node_pcdata).set_value(getStringVariable(var).c_str());
 	}
 
-	m_path = path;
 	mat_xml.save_file(path);
 }
 
@@ -128,9 +114,14 @@ int Material::load(const char* path) {
 			for (pugi::xml_node variable_node = xml_node_material.child("variable");
 				variable_node;
 				variable_node = variable_node.next_sibling("variable")) {
-				parseXmlVariable(variable_node);
+				Variable* var = nullptr;
+				Materials::get()->parseXmlVariable(variable_node, &var);
+				const char *var_name = variable_node.attribute("name").value();
+				m_shader_program->setVariable(var_name, var);
+				if (var) {
+					delete var;
+				}
 			}
-			m_path = path;
 			return 1;
 		}
 	}
@@ -173,35 +164,3 @@ std::string Material::getStringVariable(Variable* variable) {
 
 	return result;
 }
-
-void Material::parseXmlVariable(pugi::xml_node variable_node) {
-	pugi::xml_attribute var_name = variable_node.attribute("name");
-	if (!var_name) {
-		std::cerr << "Material::load: Unknown variable" << "\n";
-		return;
-	}
-	pugi::xml_attribute var_type = variable_node.attribute("type");
-	if (var_type) {
-		if (strcmp(var_type.value(), "int") == 0) {
-			m_shader_program->setVariable(var_name.value(),
-				&VariableInt(Utils::stringToInt(variable_node.child_value())));
-		} else if (strcmp(var_type.value(), "float") == 0) {
-			m_shader_program->setVariable(var_name.value(),
-				&VariableFloat(Utils::stringToFloat(variable_node.child_value())));
-		} else if (strcmp(var_type.value(), "vec3") == 0) {
-			m_shader_program->setVariable(var_name.value(),
-				&VariableVec3(Utils::stringToVec3(variable_node.child_value())));
-		} else if (strcmp(var_type.value(), "vec4") == 0) {
-			m_shader_program->setVariable(var_name.value(),
-				&VariableVec4(Utils::stringToVec4(variable_node.child_value())));
-		} else {
-			std::cerr << "Material::load: Unknown variable " << variable_node <<
-				" type " << var_type.value() << "\n";
-		}
-	} else {
-		std::cerr << "Material::load: Unknown variable " << variable_node << " type\n";
-	}
-}
-
-
-
