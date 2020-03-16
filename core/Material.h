@@ -32,11 +32,6 @@ private:
 
 	std::string getStringVariable(Variable *variable);
 	void parseXmlVariable(pugi::xml_node variable_node);
-
-	int parseXmlVariableInt(const char* str_var);
-	float parseXmlVariableFloat(const char* str_var);
-	glm::vec3 parseXmlVariableVec3(const char* str_var);
-	glm::vec4 parseXmlVariableVec4(const char* str_var);
 };
 
 #endif //AETNA_MATERIAL_H

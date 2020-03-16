@@ -10,6 +10,16 @@ public:
 	static std::string readFile(const std::string &path);
 	static std::string getPathToCore();
 	static std::vector<std::string> splitString(const std::string &str, const std::string &delimiters);
+	static int stringToInt(const char* str);
+	static float stringToFloat(const char* str);
+	static glm::vec3 stringToVec3(const char* str);
+	static glm::vec4 stringToVec4(const char* str);
+	static glm::mat4 stringToMat4(const char* str);
+	static std::string intToString(int val);
+	static std::string floatToString(float val);
+	static std::string vec3ToString(glm::vec3 val);
+	static std::string vec4ToString(glm::vec4 val);
+	static std::string mat4ToString(glm::mat4 val);
 };
 
 class Variable {

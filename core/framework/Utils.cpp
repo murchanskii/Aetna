@@ -35,6 +35,121 @@ std::vector<std::string> Utils::splitString(const std::string& str, const std::s
 	return result;
 }
 
+int Utils::stringToInt(const char* str) {
+	return std::stoi(str);
+}
+
+float Utils::stringToFloat(const char* str) {
+	float result = 0.0f;
+	if ((str[strlen(str) - 1] >= '0' &&
+		str[strlen(str) - 1] <= '9') ||
+		str[strlen(str) - 1] == 'f') {
+		if (str[strlen(str) - 1] == 'f') {
+			result = std::stof(std::string(str).substr(0, strlen(str) - 1));
+		}
+		else {
+			result = std::stof(str);
+		}
+	}
+	return result;
+}
+
+glm::vec3 Utils::stringToVec3(const char* str) {
+	glm::vec3 result = glm::vec3(0.0f);
+
+	std::string std_str = str;
+	std::string delimiter = " ";
+	std::vector<std::string> digits = Utils::splitString(std_str, delimiter);
+	if (digits.size() != 3) {
+		return result;
+	}
+
+	for (int i = 0; i < digits.size(); ++i) {
+		result[i] = Utils::stringToFloat(digits[i].c_str());
+	}
+	return result;
+}
+
+glm::vec4 Utils::stringToVec4(const char* str) {
+	glm::vec4 result = glm::vec4(0.0f);
+
+	std::string std_str = str;
+	std::string delimiter = " ";
+	std::vector<std::string> digits = Utils::splitString(std_str, delimiter);
+	if (digits.size() != 4) {
+		return result;
+	}
+
+	for (int i = 0; i < digits.size(); ++i) {
+		result[i] = Utils::stringToFloat(digits[i].c_str());
+	}
+	return result;
+}
+
+glm::mat4 Utils::stringToMat4(const char* str)
+{
+	glm::mat4 result = glm::mat4(0.0f);
+
+	std::string std_str = str;
+	std::string delimiter = " ";
+	std::vector<std::string> digits = Utils::splitString(std_str, delimiter);
+	if (digits.size() != 4 * 4) {
+		return result;
+	}
+
+	for (int i = 0; i < 4; ++i) {
+		result[i][0] = Utils::stringToFloat(digits[i * 4 + 0].c_str());
+		result[i][1] = Utils::stringToFloat(digits[i * 4 + 1].c_str());
+		result[i][2] = Utils::stringToFloat(digits[i * 4 + 2].c_str());
+		result[i][3] = Utils::stringToFloat(digits[i * 4 + 3].c_str());
+	}
+
+	return result;
+}
+
+std::string Utils::intToString(int val)
+{
+	return std::to_string(val);
+}
+
+std::string Utils::floatToString(float val)
+{
+	return std::to_string(val);
+}
+
+std::string Utils::vec3ToString(glm::vec3 val)
+{
+	return std::to_string(val.x) + " " + std::to_string(val.y) + " " + std::to_string(val.z);
+}
+
+std::string Utils::vec4ToString(glm::vec4 val)
+{
+	return std::to_string(val.x) + " " + std::to_string(val.y) + " " + std::to_string(val.z) + " " + std::to_string(val.w);
+}
+
+std::string Utils::mat4ToString(glm::mat4 val)
+{
+	return std::to_string(val[0].x) + " " +
+		std::to_string(val[0].y) + " " +
+		std::to_string(val[0].z) + " " +
+		std::to_string(val[0].w) + " " +
+
+		std::to_string(val[1].x) + " " +
+		std::to_string(val[1].y) + " " +
+		std::to_string(val[1].z) + " " +
+		std::to_string(val[1].w) + " " +
+
+		std::to_string(val[2].x) + " " +
+		std::to_string(val[2].y) + " " +
+		std::to_string(val[2].z) + " " +
+		std::to_string(val[2].w) + " " +
+
+		std::to_string(val[3].x) + " " +
+		std::to_string(val[3].y) + " " +
+		std::to_string(val[3].z) + " " +
+		std::to_string(val[3].w);
+}
+
 bool Variable::isInt() {
 	return false;
 }

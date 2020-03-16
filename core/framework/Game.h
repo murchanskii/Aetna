@@ -24,6 +24,7 @@ public:
     Game& operator=(Game const&) = delete;
 
     void saveScene(const char *path);
+	void loadScene(const char* path);
 
     int getNumEntitiesInScene();
     void addEntityToScene(Entity *ent);

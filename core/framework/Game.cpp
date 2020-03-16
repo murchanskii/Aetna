@@ -225,40 +225,10 @@ void Game::render() {
 
 void Game::saveScene(const char* path) {
 
-    auto vec3_to_str = [](glm::vec3 vec3) {
-        return std::to_string(vec3.x) + " " + std::to_string(vec3.y) + " " + std::to_string(vec3.z);
-    };
-
-    auto vec4_to_str = [](glm::vec4 vec4) {
-        return std::to_string(vec4.x) + " " + std::to_string(vec4.y) + " " + std::to_string(vec4.z) + " " + std::to_string(vec4.w);
-    };
-
-    auto mat4_to_str = [](glm::mat4 mat4) {
-        return std::to_string(mat4[0].x) + " " +
-            std::to_string(mat4[0].y) + " " +
-            std::to_string(mat4[0].z) + " " +
-            std::to_string(mat4[0].w) + " " +
-
-            std::to_string(mat4[1].x) + " " +
-            std::to_string(mat4[1].y) + " " +
-            std::to_string(mat4[1].z) + " " +
-            std::to_string(mat4[1].w) + " " +
-
-            std::to_string(mat4[2].x) + " " +
-            std::to_string(mat4[2].y) + " " +
-            std::to_string(mat4[2].z) + " " +
-            std::to_string(mat4[2].w) + " " +
-
-            std::to_string(mat4[3].x) + " " +
-            std::to_string(mat4[3].y) + " " +
-            std::to_string(mat4[3].z) + " " +
-            std::to_string(mat4[3].w);
-    };
-
     auto vector_float_to_str = [](std::vector<float> vec) {
         std::string result;
         for (int i = 0; i < vec.size(); ++i) {
-            result += std::to_string(vec[i]) + " ";
+            result += std::string(Utils::floatToString(vec[i])) + " ";
         }
         if (!result.empty()) {
             result = result.erase(result.length() - 1);
@@ -268,10 +238,11 @@ void Game::saveScene(const char* path) {
 
     pugi::xml_document scene_xml;
 
+	pugi::xml_node xml_node_scene = scene_xml.append_child("scene");
     for (int i = 0; i < m_vec_gents.size(); ++i) {
         Entity* entity = m_vec_gents[i].entity;
 
-        pugi::xml_node xml_node_entity = scene_xml.append_child("entity");
+        pugi::xml_node xml_node_entity = xml_node_scene.append_child("entity");
         xml_node_entity.append_attribute("id").set_value(i);
         xml_node_entity.append_attribute("name").set_value(entity->getName().c_str());
         xml_node_entity.append_attribute("type").set_value(entity->getTypeName());
@@ -280,7 +251,7 @@ void Game::saveScene(const char* path) {
         }
 
         pugi::xml_node xml_node_transform = xml_node_entity.append_child("transform");
-        std::string str_world_transform = mat4_to_str(entity->getWorldTransform());            
+        std::string str_world_transform = Utils::mat4ToString(entity->getWorldTransform());            
         xml_node_transform.append_child(pugi::node_pcdata).set_value(str_world_transform.c_str());
 
         if (dynamic_cast<Object*>(entity)) {
@@ -312,13 +283,13 @@ void Game::saveScene(const char* path) {
                         xml_node_mat_var.append_child(pugi::node_pcdata).set_value(std::to_string(var->getFloat()).c_str());
                     }
                     else if (var->isVec3()) {
-                        xml_node_mat_var.append_child(pugi::node_pcdata).set_value(vec3_to_str(var->getVec3()).c_str());
+                        xml_node_mat_var.append_child(pugi::node_pcdata).set_value(Utils::vec3ToString(var->getVec3()).c_str());
                     }
                     else if (var->isVec4()) {
-                        xml_node_mat_var.append_child(pugi::node_pcdata).set_value(vec4_to_str(var->getVec4()).c_str());
+                        xml_node_mat_var.append_child(pugi::node_pcdata).set_value(Utils::vec4ToString(var->getVec4()).c_str());
                     }
                     else if (var->isMat4()) {
-                        xml_node_mat_var.append_child(pugi::node_pcdata).set_value(mat4_to_str(var->getMat4()).c_str());
+                        xml_node_mat_var.append_child(pugi::node_pcdata).set_value(Utils::mat4ToString(var->getMat4()).c_str());
                     }
                 }
             }
@@ -327,13 +298,13 @@ void Game::saveScene(const char* path) {
             Light* light = dynamic_cast<Light*>(entity);
             pugi::xml_node xml_node_light = xml_node_entity.append_child("light");
             
-            xml_node_light.append_child("ambient").append_child(pugi::node_pcdata).set_value(vec3_to_str(light->getAmbient()).c_str());
-            xml_node_light.append_child("diffuse").append_child(pugi::node_pcdata).set_value(vec3_to_str(light->getDiffuse()).c_str());
-            xml_node_light.append_child("specular").append_child(pugi::node_pcdata).set_value(vec3_to_str(light->getSpecular()).c_str());
+            xml_node_light.append_child("ambient").append_child(pugi::node_pcdata).set_value(Utils::vec3ToString(light->getAmbient()).c_str());
+            xml_node_light.append_child("diffuse").append_child(pugi::node_pcdata).set_value(Utils::vec3ToString(light->getDiffuse()).c_str());
+            xml_node_light.append_child("specular").append_child(pugi::node_pcdata).set_value(Utils::vec3ToString(light->getSpecular()).c_str());
             
             if (dynamic_cast<LightDirectional*>(light)) {
                 LightDirectional* light_dir = dynamic_cast<LightDirectional*>(light);
-                xml_node_light.append_child("direction").append_child(pugi::node_pcdata).set_value(vec3_to_str(light_dir->getDirection()).c_str());
+                xml_node_light.append_child("direction").append_child(pugi::node_pcdata).set_value(Utils::vec3ToString(light_dir->getDirection()).c_str());
             }
             else if (dynamic_cast<LightPoint*>(light)) {
                 LightPoint* light_point = dynamic_cast<LightPoint*>(light);
@@ -350,4 +321,21 @@ void Game::saveScene(const char* path) {
     }
 
     scene_xml.save_file(path);
+}
+
+void Game::loadScene(const char* path)
+{
+	pugi::xml_document scene_xml;
+	pugi::xml_parse_result xml_res = scene_xml.load_file(path);
+	if (xml_res) {
+		pugi::xml_node xml_node_scene = scene_xml.child("scene");
+		if (xml_node_scene) {
+			for (pugi::xml_node xml_node_entity = xml_node_scene.child("entity");
+				xml_node_entity;
+				xml_node_entity = xml_node_entity.next_sibling("entity")) {
+				std::string str_transform = xml_node_entity.child("transform").value();
+
+			}
+		}
+	}
 }
