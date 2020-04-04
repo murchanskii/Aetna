@@ -31,6 +31,10 @@ void Mesh::setNormals(std::vector<float> t_normals) {
     m_normals = t_normals;
 }
 
+void Mesh::setTextureCoordinates(std::vector<float> t_tex_coords) {
+    m_tex_coords = t_tex_coords;
+}
+
 void Mesh::generate_normals(std::vector<float> &t_normals) {
     auto get_surface_normal = [](const glm::vec3 &p1,
                                        const glm::vec3 &p2,
@@ -104,5 +108,9 @@ std::vector<int> Mesh::getIndices() {
 
 std::vector<float> Mesh::getNormals() {
     return m_normals;
+}
+
+std::vector<float> Mesh::getTextureCoordinates() {
+    return m_tex_coords;
 }
 

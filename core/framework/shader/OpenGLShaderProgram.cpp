@@ -10,8 +10,8 @@
 
 OpenGLShaderProgram::OpenGLShaderProgram() {
     m_program_id = glCreateProgram();
-    glBindAttribLocation(m_program_id, 0, "pos"); // temp
-    glBindAttribLocation(m_program_id, 1, "color"); // temp
+    //glBindAttribLocation(m_program_id, 0, "pos"); // temp
+    //glBindAttribLocation(m_program_id, 1, "color"); // temp
 
     m_vertex_shader = nullptr;
     m_fragment_shader = nullptr;

@@ -24,9 +24,10 @@ endif()
 
 add_library(SOIL STATIC IMPORTED)
 set_property(TARGET SOIL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/dependencies/SOIL/include")
-set_property(TARGET SOIL PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/dependencies/SOIL/lib/SOIL.lib")
+set_property(TARGET SOIL PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/dependencies/SOIL/lib/SOIL.lib")
 
 add_executable(Aetna
+        3rd/stb_image.h
         dependencies/glad/src/glad.c
         dependencies/pugixml/src/pugixml.cpp
         main.cpp
@@ -48,6 +49,8 @@ add_executable(Aetna
         core/framework/Controls.cpp
         core/framework/Controls.h 
         core/framework/Lights.h 
+        core/framework/Texture.h 
+        core/framework/Texture.cpp 
 		core/framework/Script.h 
 		MainScript.cpp 
 		MainScript.h 
@@ -68,6 +71,6 @@ add_executable(Aetna
         core/framework/input/InputGLFW.cpp
         core/framework/objects/Player.h
         core/framework/objects/PlayerFree.h
-        core/framework/objects/PlayerFree.cpp)
+        core/framework/objects/PlayerFree.cpp "core/framework/Texture.cpp")
 
-target_link_libraries(Aetna glfw3)
+target_link_libraries(Aetna glfw3 SOIL)

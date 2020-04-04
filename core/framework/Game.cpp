@@ -281,6 +281,8 @@ void Game::saveScene(const char* path) {
                 xml_node_vertex.append_child(pugi::node_pcdata).set_value(Utils::vecFloatToString(object->getMesh()->getVertices()).c_str());
                 pugi::xml_node xml_node_normal = xml_node_mesh.append_child("normal");
                 xml_node_normal.append_child(pugi::node_pcdata).set_value(Utils::vecFloatToString(object->getMesh()->getNormals()).c_str());
+                pugi::xml_node xml_node_tex_coords = xml_node_mesh.append_child("texture_coordinates");
+                xml_node_tex_coords.append_child(pugi::node_pcdata).set_value(Utils::vecFloatToString(object->getMesh()->getTextureCoordinates()).c_str());
             }
             
             if (object->getMaterial()) {
@@ -361,8 +363,10 @@ void Game::loadScene(const char* path)
                     pugi::xml_node xml_node_mesh = xml_node_object.child("mesh");
                     const char *str_vertex = xml_node_mesh.child("vertex").child_value();
                     const char *str_normal = xml_node_mesh.child("normal").child_value();
+                    const char* str_tex_coords = xml_node_mesh.child("texture_coordinates").child_value();
                     Mesh* mesh = new Mesh(Utils::stringToVecFloat(str_vertex));
                     mesh->setNormals(Utils::stringToVecFloat(str_normal));
+                    mesh->setTextureCoordinates(Utils::stringToVecFloat(str_tex_coords));
 
                     pugi::xml_node xml_node_material = xml_node_object.child("material");
                     const char* str_material_name = xml_node_material.attribute("name").value();
@@ -372,7 +376,7 @@ void Game::loadScene(const char* path)
                         variable_node;
                         variable_node = variable_node.next_sibling("variable")) {
                         Variable* var = nullptr;
-                        Materials::get()->parseXmlVariable(variable_node, &var);
+                        Utils::parseXmlVariable(variable_node, &var);
                         const char* var_name = variable_node.attribute("name").value();
                         material->getShaderProgram()->setVariable(var_name, var);
                     }

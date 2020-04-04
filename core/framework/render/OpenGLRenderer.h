@@ -30,9 +30,16 @@ public:
 
 protected:
     struct OpenGLObject {
+        struct OpenGLTexture {
+            GLuint location;
+            int num;
+            std::string name;
+        };
+
         Object *scene_object;
         GLuint VAO;
         std::vector<GLuint> vec_VBOs;
+        std::vector<OpenGLTexture*> vec_textures;
     };
 
     void addObjectToRender(Object *obj) override;

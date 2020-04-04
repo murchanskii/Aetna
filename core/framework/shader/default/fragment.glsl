@@ -2,7 +2,9 @@
 
 in vec3 fNormals;
 in vec3 fPosition;
+in vec2 fTexCoord;
 
+uniform sampler2D u_albedo_texture;
 uniform vec4 object_color;
 uniform vec3 view_position;
 
@@ -46,22 +48,25 @@ uniform LightSpot lights_spot[MAX_LIGHTS];
 out vec4 fragcolor0;
 
 vec3 calc_light_directional(LightDirectional light, vec3 normal, vec3 view_direction) {
+    vec4 color = texture(u_albedo_texture, fTexCoord) * object_color;
+
     vec3 light_direction = normalize(-light.direction);
     float diffuse_shading = max(dot(normal, light_direction), 0.0f);
     
     vec3 reflect_direction = reflect(-light_direction, normal);
     //float specular_shading = pow(max(view_direction, reflect_direction), 0.0f), material.shininess;
 
-    vec3 ambient = light.ambient * object_color.xyz;
-    vec3 diffuse = light.diffuse * diffuse_shading * object_color.xyz;
-    vec3 specular = vec3(0.0f, 0.0f, 0.0f);//light.specular * specular_shading * object_color.xyz;
+    vec3 ambient = light.ambient * color.xyz;
+    vec3 diffuse = light.diffuse * diffuse_shading * color.xyz;
+    vec3 specular = vec3(0.0f, 0.0f, 0.0f);//light.specular * specular_shading * color.xyz;
 
     return ambient + diffuse + specular;
 }
 
 vec3 calc_light_point(LightPoint light, vec3 normal, vec3 frag_pos, vec3 view_dir) {
-    vec3 light_dir = normalize(light.position - frag_pos);
+    vec4 color = texture(u_albedo_texture, fTexCoord) * object_color;
 
+    vec3 light_dir = normalize(light.position - frag_pos);
     float diffuse_shading = max(dot(normal, light_dir), 0.0f);
 
     vec3 reflect_direction = reflect(-light_dir, normal);
@@ -70,9 +75,9 @@ vec3 calc_light_point(LightPoint light, vec3 normal, vec3 frag_pos, vec3 view_di
     float distance = length(light.position - fPosition);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * distance * distance);
 
-    vec3 ambient = light.ambient * object_color.xyz;
-    vec3 diffuse = light.diffuse * diffuse_shading * object_color.xyz;
-    vec3 specular = light.specular * specular_shading * object_color.xyz;
+    vec3 ambient = light.ambient * color.xyz;
+    vec3 diffuse = light.diffuse * diffuse_shading * color.xyz;
+    vec3 specular = light.specular * specular_shading * color.xyz;
 
     return (ambient + diffuse + specular) * attenuation;
 }

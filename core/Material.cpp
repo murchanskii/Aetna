@@ -11,18 +11,18 @@
 Material::Material() {
 	default_shader_program_used = true;
 	m_shader_program = new OpenGLShaderProgram();
-
-	int load_res = load(Materials::get()->getMaterialPath("base_mat").c_str());
-	if (load_res < 0) {
-		delete m_shader_program;
-		m_shader_program = nullptr;
-		default_shader_program_used = false;
-	}
+	m_vec_textures.emplace_back(new Texture());
 }
 
 Material::~Material() {
 	if (default_shader_program_used) {
 		delete m_shader_program;
+	}
+
+	while (!m_vec_textures.empty()) {
+		Texture* texture = m_vec_textures[0];
+		m_vec_textures.erase(m_vec_textures.begin());
+		delete texture;
 	}
 }
 
@@ -68,7 +68,7 @@ void Material::save(const char* path) {
 			continue;
 		}
 		xml_node_variable.append_attribute("type").set_value(type_name.c_str());
-		xml_node_variable.append_child(pugi::node_pcdata).set_value(getStringVariable(var).c_str());
+		xml_node_variable.append_child(pugi::node_pcdata).set_value(Utils::getStringVariable(var).c_str());
 	}
 
 	mat_xml.save_file(path);
@@ -115,13 +115,24 @@ int Material::load(const char* path) {
 				variable_node;
 				variable_node = variable_node.next_sibling("variable")) {
 				Variable* var = nullptr;
-				Materials::get()->parseXmlVariable(variable_node, &var);
+				Utils::parseXmlVariable(variable_node, &var);
 				const char *var_name = variable_node.attribute("name").value();
 				m_shader_program->setVariable(var_name, var);
 				if (var) {
 					delete var;
 				}
 			}
+
+			for (pugi::xml_node variable_node = xml_node_material.child("texture");
+				variable_node;
+				variable_node = variable_node.next_sibling("texture")) {
+				const char* tex_name = variable_node.attribute("name").value();
+				const char* tex_path = variable_node.attribute("path").value();
+
+				// test
+				m_vec_textures[0]->load(tex_path);
+			}
+
 			return 1;
 		}
 	}
@@ -139,28 +150,14 @@ std::string Material::getName()
 	return m_name;
 }
 
-void Material::apply() {
-	m_shader_program->use();
+Texture* Material::getTextureAlbedo() {
+	if (m_vec_textures.empty()) {
+		return nullptr;
+	}
+	// todo: find proper texture
+	return m_vec_textures[0];
 }
 
-std::string Material::getStringVariable(Variable* variable) {
-	std::string result;
-
-	if (variable->isInt()) {
-		result = std::to_string(variable->getInt());
-	} else if (variable->isFloat()) {
-		result = std::to_string(variable->getFloat());
-	} else if (variable->isVec3()) {
-		for (int i = 0; i < variable->getVec3().length(); ++i) {
-			result += std::to_string(variable->getVec3()[i]) + " ";
-		}
-		result.erase(result.end() - 1);
-	} else if (variable->isVec4()) {
-		for (int i = 0; i < variable->getVec4().length(); ++i) {
-			result += std::to_string(variable->getVec4()[i]) + " ";
-		}
-		result.erase(result.end() - 1);
-	}
-
-	return result;
+void Material::apply() {
+	m_shader_program->use();
 }

@@ -1,15 +1,20 @@
 #ifndef AETNA_UTILS_H
 #define AETNA_UTILS_H
 
+#include <pugixml.hpp>
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+
+class Variable;
 
 class Utils {
 public:
 	static std::string readFile(const std::string &path);
 	static std::string getPathToCore();
 	static std::vector<std::string> splitString(const std::string &str, const std::string &delimiters);
+	static void parseXmlVariable(pugi::xml_node variable_node, Variable** var);
+	static std::string getStringVariable(Variable* variable);
 	static int stringToInt(const char* str);
 	static float stringToFloat(const char* str);
 	static glm::vec3 stringToVec3(const char* str);

@@ -35,6 +35,48 @@ std::vector<std::string> Utils::splitString(const std::string& str, const std::s
 	return result;
 }
 
+void Utils::parseXmlVariable(pugi::xml_node variable_node, Variable** var) {
+	pugi::xml_attribute var_name = variable_node.attribute("name");
+	if (!var_name) {
+		std::cerr << "Material::load: Unknown variable" << "\n";
+		return;
+	}
+	pugi::xml_attribute var_type = variable_node.attribute("type");
+	if (var_type) {
+		if (strcmp(var_type.value(), "int") == 0) {
+			*var = new VariableInt(Utils::stringToInt(variable_node.child_value()));
+		} else if (strcmp(var_type.value(), "float") == 0) {
+			*var = new VariableFloat(Utils::stringToFloat(variable_node.child_value()));
+		} else if (strcmp(var_type.value(), "vec3") == 0) {
+			*var = new VariableVec3(Utils::stringToVec3(variable_node.child_value()));
+		} else if (strcmp(var_type.value(), "vec4") == 0) {
+			*var = new VariableVec4(Utils::stringToVec4(variable_node.child_value()));
+		} else {
+			std::cerr << "Material::load: Unknown variable " << variable_node <<
+				" type " << var_type.value() << "\n";
+			return;
+		}
+	} else {
+		std::cerr << "Material::load: Unknown variable " << variable_node << " type\n";
+	}
+}
+
+std::string Utils::getStringVariable(Variable* variable) {
+	std::string result;
+
+	if (variable->isInt()) {
+		result = intToString(variable->getInt());
+	} else if (variable->isFloat()) {
+		result = floatToString(variable->getFloat());
+	} else if (variable->isVec3()) {
+		result = vec3ToString(variable->getVec3());
+	} else if (variable->isVec4()) {
+		result = vec4ToString(variable->getVec4());
+	}
+
+	return result;
+}
+
 int Utils::stringToInt(const char* str) {
 	return std::stoi(str);
 }
