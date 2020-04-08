@@ -100,12 +100,17 @@ void OpenGLRenderer::addObjectToRender(Object *obj) {
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
             glDisable(GL_ARRAY_BUFFER);
 
-            if (gl_object->scene_object->getMaterial()->getTextureAlbedo()) {
-                OpenGLObject::OpenGLTexture *ogl_albedo_tex = new OpenGLObject::OpenGLTexture();
-                ogl_albedo_tex->num = 0;
-                ogl_albedo_tex->name = "u_albedo_texture";
-                glGenTextures(1, &ogl_albedo_tex->location);
-                glBindTexture(GL_TEXTURE_2D, ogl_albedo_tex->location);
+            for (int i = 0, tex_num = 0; i < (int)Material::TextureType::COUNT; ++i) {
+                Material::TextureType tex_type = (Material::TextureType) i;
+                if (!gl_object->scene_object->getMaterial()->getTexture(tex_type)->getData()) {
+                    continue;
+                }
+
+                OpenGLObject::OpenGLTexture* ogl_tex = new OpenGLObject::OpenGLTexture();
+                ogl_tex->num = tex_num++;
+                ogl_tex->name = std::string("material.") + gl_object->scene_object->getMaterial()->getTextureName(tex_type);
+                glGenTextures(1, &ogl_tex->location);
+                glBindTexture(GL_TEXTURE_2D, ogl_tex->location);
                 // set the texture wrapping parameters
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -113,13 +118,13 @@ void OpenGLRenderer::addObjectToRender(Object *obj) {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 // load image, create texture and generate mipmaps
-                Texture* albedo_tex = gl_object->scene_object->getMaterial()->getTextureAlbedo();
-                if (albedo_tex) {
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, albedo_tex->getWidth(), albedo_tex->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, albedo_tex->getData());
+                Texture* tex = gl_object->scene_object->getMaterial()->getTexture(tex_type);
+                if (tex) {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->getWidth(), tex->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex->getData());
                     glGenerateMipmap(GL_TEXTURE_2D);
                 }
-                gl_object->scene_object->getMaterial()->getShaderProgram()->setVariable(ogl_albedo_tex->name, &VariableInt(ogl_albedo_tex->num));
-                gl_object->vec_textures.emplace_back(ogl_albedo_tex);
+                gl_object->scene_object->getMaterial()->getShaderProgram()->setVariable(ogl_tex->name, &VariableInt(ogl_tex->num));
+                gl_object->vec_textures.emplace_back(ogl_tex);
             }
         }
 
@@ -160,8 +165,10 @@ void OpenGLRenderer::renderObjects() {
     for (OpenGLObject *gl_object : m_vec_gl_objects) {
         if (gl_object->scene_object->isEnabled() && gl_object->scene_object->getMaterial()) {
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, gl_object->vec_textures[0]->location); // albedo
+            for (int i = GL_TEXTURE0, j = 0; j < gl_object->vec_textures.size() && i <= GL_TEXTURE31; ++i, ++j) {
+                glActiveTexture(i);
+                glBindTexture(GL_TEXTURE_2D, gl_object->vec_textures[j]->location);
+            }
 
             gl_object->scene_object->getMaterial()->apply();
             glBindVertexArray(gl_object->VAO);

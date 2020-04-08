@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-Engine::Engine() : m_initialized(false) {
+Engine::Engine() : m_app(nullptr), m_game(nullptr), m_initialized(false) {
 
 }
 
@@ -56,7 +56,8 @@ void Engine::terminate() {
         script->terminate();
     }
 
-    Game::get()->terminate();
+    m_game->terminate();
+    m_game = nullptr;
 
     if (m_app) {
         m_app->terminate();
@@ -220,7 +221,8 @@ void Engine::initialize_application(AppAPI api) {
 }
 
 void Engine::initialize_game() {
-    Game::get()->initialize();
+    m_game = Game::get();
+    m_game->initialize();
 }
 
 void Engine::update() {
@@ -229,12 +231,12 @@ void Engine::update() {
     for (Script* script : m_scripts) {
         script->update();
     }
-    Game::get()->update();
+    m_game->update();
     m_app->update();
 
     for (Script* script : m_scripts) {
         script->render();
     }
-    Game::get()->render();
+    m_game->render();
     m_app->postUpdate();
 }

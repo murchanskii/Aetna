@@ -27,5 +27,5 @@ int Texture::getHeight() {
 void Texture::load(const char* path) {
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	std::string str_path = std::string(Engine::get()->getCorePath()) + path;
-	data = stbi_load(str_path.c_str(), &m_width, &m_height, &m_channels, 0);
+	data = stbi_load(str_path.c_str(), &m_width, &m_height, &m_channels, STBI_rgb_alpha);
 }

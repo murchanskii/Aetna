@@ -48,7 +48,9 @@ void ApplicationGL::preUpdate() {
 	delta_time = std::chrono::duration<float>(std::chrono::system_clock::now() - frame_time).count();
 	frame_time = std::chrono::system_clock::now();
 
-	m_input_proxy->updateInput();
+	if (m_input_proxy) {
+		m_input_proxy->updateInput();
+	}
 }
 
 void ApplicationGL::update() {

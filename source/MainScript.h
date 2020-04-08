@@ -1,7 +1,3 @@
-//
-// Created by Candles on 19.01.2020.
-//
-
 #ifndef AETNA_MAINSCRIPT_H
 #define AETNA_MAINSCRIPT_H
 

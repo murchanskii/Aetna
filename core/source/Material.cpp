@@ -11,7 +11,10 @@
 Material::Material() {
 	default_shader_program_used = true;
 	m_shader_program = new OpenGLShaderProgram();
-	m_vec_textures.emplace_back(new Texture());
+	
+	tex_albedo.texture = new Texture();
+	tex_normal.texture = new Texture();
+	tex_specular.texture = new Texture();
 }
 
 Material::~Material() {
@@ -19,10 +22,16 @@ Material::~Material() {
 		delete m_shader_program;
 	}
 
-	while (!m_vec_textures.empty()) {
-		Texture* texture = m_vec_textures[0];
-		m_vec_textures.erase(m_vec_textures.begin());
-		delete texture;
+	if (tex_albedo.texture) {
+		delete tex_albedo.texture;
+	}
+
+	if (tex_normal.texture) {
+		delete tex_normal.texture;
+	}
+
+	if (tex_specular.texture) {
+		delete tex_specular.texture;
 	}
 }
 
@@ -123,14 +132,29 @@ int Material::load(const char* path) {
 				}
 			}
 
-			for (pugi::xml_node variable_node = xml_node_material.child("texture");
-				variable_node;
-				variable_node = variable_node.next_sibling("texture")) {
-				const char* tex_name = variable_node.attribute("name").value();
-				const char* tex_path = variable_node.attribute("path").value();
+			for (pugi::xml_node texture_node = xml_node_material.child("texture");
+				texture_node;
+				texture_node = texture_node.next_sibling("texture")) {
+				const char* tex_name = texture_node.attribute("name").value();
+				const char* tex_type = texture_node.attribute("type").value();
+				const char* tex_path = texture_node.attribute("path").value();
 
-				// test
-				m_vec_textures[0]->load(tex_path);
+				TextureVariable* tex_to_load = nullptr;
+				if (strcmp(tex_type, "albedo") == 0) {
+					tex_to_load = &tex_albedo;
+				} else if (strcmp(tex_type, "normal") == 0) {
+					tex_to_load = &tex_normal;
+				} else if (strcmp(tex_type, "specular") == 0) {
+					tex_to_load = &tex_specular;
+				}
+
+				if (!tex_to_load) {
+					std::cerr << "Texture type: " << tex_type << " unknown" << std::endl;
+					continue;
+				}
+
+				tex_to_load->name = tex_name;
+				tex_to_load->texture->load(tex_path);
 			}
 
 			return 1;
@@ -150,12 +174,41 @@ std::string Material::getName()
 	return m_name;
 }
 
-Texture* Material::getTextureAlbedo() {
-	if (m_vec_textures.empty()) {
+Texture* Material::getTexture(TextureType type) {
+	switch (type) {
+	case Material::TextureType::ALBEDO:
+		return tex_albedo.texture;
+	case Material::TextureType::NORMAL:
+		return tex_normal.texture;
+	case Material::TextureType::SPECULAR:
+		return tex_specular.texture;
+	default:
 		return nullptr;
 	}
-	// todo: find proper texture
-	return m_vec_textures[0];
+}
+
+const char* Material::getTextureName(TextureType type) {
+	std::string *result;
+	switch (type) {
+	case Material::TextureType::ALBEDO:
+		result = &tex_albedo.name;
+		break;
+	case Material::TextureType::NORMAL:
+		result = &tex_normal.name;
+		break;
+	case Material::TextureType::SPECULAR:
+		result = &tex_specular.name;
+		break;
+	}
+	return result->c_str();
+}
+
+void Material::setTexture(TextureType type, const char* path) {
+
+}
+
+void Material::setTexture(TextureType type, Texture* texture) {
+
 }
 
 void Material::apply() {

@@ -384,6 +384,12 @@ void Game::loadScene(const char* path)
                         material->getShaderProgram()->setVariable(var_name, var);
                     }
 
+                    for (pugi::xml_node texture_node = xml_node_material.child("texture");
+                        texture_node;
+                        texture_node = texture_node.next_sibling("texture")) {
+                        
+                    }
+
                     Object* object = new Object(mesh, material);
                     entity_to_add = object;
                 } else if (std::string(type).rfind("Light", 0) == 0) {

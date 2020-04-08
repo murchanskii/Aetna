@@ -9,6 +9,8 @@ public:
 	Material();
 	~Material();
 
+	void apply();
+
 	ShaderProgram *getShaderProgram();
 	void setShaderProgram(ShaderProgram* shdr_prog);
 	
@@ -18,16 +20,33 @@ public:
 	void setName(std::string name);
 	std::string getName();
 
-	Texture *getTextureAlbedo();
+	enum class TextureType {
+		ALBEDO = 0,
+		NORMAL,
+		SPECULAR,
+		COUNT			// not a type
+	};
 
-	void apply();
+	Texture *getTexture(TextureType type);
+	const char* getTextureName(TextureType type);
+	void setTexture(TextureType type, const char *path);
+	void setTexture(TextureType type, Texture *texture);
+
 private:
 
 	ShaderProgram* m_shader_program;
-	std::vector<Texture*> m_vec_textures;
 	bool default_shader_program_used;
 
+	struct TextureVariable {
+		std::string name;
+		Texture* texture;
+	};
+
 	std::string m_name;
+
+	TextureVariable tex_albedo;
+	TextureVariable tex_normal;
+	TextureVariable tex_specular;
 };
 
 #endif //AETNA_MATERIAL_H
