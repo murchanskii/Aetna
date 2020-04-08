@@ -2,6 +2,7 @@
 #define AETNA_OPENGLRENDERER_H
 
 #include <framework/ApplicationGL.h>
+#include <framework/render/shader/OpenGLShaderProgram.h>
 
 #include <vector>
 
@@ -32,6 +33,8 @@ protected:
         std::vector<OpenGLTexture*> vec_textures;
     };
 
+    void initialize_framebuffers();
+
     void addObjectToRender(Object *obj) override;
     void removeObjectFromRender(Object *obj) override;
     void removeObjectFromRender(int id) override;
@@ -47,6 +50,12 @@ private:
     bool m_initialized;
     
     std::vector<OpenGLObject*> m_vec_gl_objects;
+
+    // scene framebuffer
+    unsigned int quadVAO, quadVBO;
+    unsigned int framebuffer;
+    unsigned int textureColorbuffer;
+    OpenGLShaderProgram* shprog_framebuffer = nullptr;
 };
 
 
