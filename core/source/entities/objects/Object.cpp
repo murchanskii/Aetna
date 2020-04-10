@@ -50,9 +50,9 @@ Mesh *Object::getMesh() {
 }
 
 void Object::update() {
-    if (m_material && m_material->getShaderProgram()) {
-        m_material->getShaderProgram()->setVariable("model", &VariableMat4(getWorldTransform()));
-        m_material->getShaderProgram()->setVariable("view", &VariableMat4(Game::get()->getCamera()->getView()));
-        m_material->getShaderProgram()->setVariable("projection", &VariableMat4(Game::get()->getCamera()->getProjection()));
+    if (m_material) {
+        m_material->setVariable("model", &VariableMat4(getWorldTransform()));
+        m_material->setVariable("view", &VariableMat4(Game::get()->getCamera()->getView()));
+        m_material->setVariable("projection", &VariableMat4(Game::get()->getCamera()->getProjection()));
     }
 }

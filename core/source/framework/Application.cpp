@@ -16,22 +16,18 @@ Application::Application(Application* app) {
 Application::~Application() {
 }
 
-const char* Application::getDirectory() {
-    if (!m_app_path.empty()) {
-        return m_app_path.c_str();
-    }
-
+std::string Application::getDirectory() {
 #ifdef _WIN32
     WCHAR wpath[MAX_PATH];
     GetModuleFileNameW(NULL, wpath, MAX_PATH);
     _bstr_t conv_path(wpath);
-    m_app_path = conv_path;
-    m_app_path = m_app_path.substr(0, m_app_path.rfind('\\'));
-    return m_app_path.c_str();
+    std::string app_path = conv_path;
+    app_path = app_path.substr(0, app_path.rfind('\\'));
+    return app_path;
 #elif __linux__
 
 #endif
-    return m_app_path.c_str();
+    return std::string();
 }
 
 Renderer* Application::getRenderer() {

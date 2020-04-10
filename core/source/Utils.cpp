@@ -13,6 +13,36 @@ std::string Utils::readFile(const std::string &path) {
     return std::string(&bytes[0], fileSize);
 }
 
+void Utils::saveFile(const std::string &path, const std::string &contents, bool binary) {
+	std::ios_base::openmode openmode = std::ios::out;
+	if (binary) {
+		openmode |= std::ios::binary;
+	}
+	std::fstream fs = std::fstream(path, openmode);
+	fs.write(&contents[0], contents.length());
+	fs.close();
+}
+
+std::string Utils::getAbsolutePathFromXML(const std::string& path) {
+	if (path._Starts_with("core:")) {
+		return Engine::get()->getCorePath() + path.substr(strlen("core:"));
+	} else if (path._Starts_with("assets:")) {
+		return Engine::get()->getAssetsPath() + path.substr(strlen("assets:"));
+	} else {
+		return std::string();
+	}
+}
+
+std::string Utils::getPathXMLFromAbsolute(const std::string& path) {
+	std::string processed_path;
+	if (path._Starts_with(Engine::get()->getCorePath())) {
+		processed_path = std::string("core:") + path.substr(strlen(Engine::get()->getCorePath() - 1));
+	} else if (path._Starts_with(Engine::get()->getAssetsPath())) {
+		processed_path = std::string("assets:") + path.substr(strlen(Engine::get()->getAssetsPath() - 1));
+	}
+	return processed_path;
+}
+
 std::vector<std::string> Utils::splitString(const std::string& str, const std::string& delimiters) {
     std::vector<std::string> result;
     size_t last = 0; 
@@ -211,59 +241,34 @@ std::string Utils::vecFloatToString(std::vector<float> vec) {
 	return result;
 }
 
-bool Variable::isInt() {
-	return false;
+Variable::Variable() { }
+Variable::Variable(const Variable& other) { }
+Variable& Variable::operator=(Variable other) { return *this; }
+bool Variable::isInt() { return false; }
+int Variable::getInt() { return 0; }
+void Variable::setInt(int value) { }
+bool Variable::isFloat() { return false; }
+float Variable::getFloat() { return 0.0f; }
+void Variable::setFloat(float value) { }
+bool Variable::isVec3() { return false; }
+glm::vec3 Variable::getVec3() { return glm::vec3(); }
+void Variable::setVec3(glm::vec3 value) { }
+bool Variable::isVec4() { return false; }
+glm::vec4 Variable::getVec4() { return glm::vec4(); }
+void Variable::setVec4(glm::vec4 value) { }
+bool Variable::isMat4() { return false; }
+glm::mat4 Variable::getMat4() { return glm::mat4(); }
+void Variable::setMat4(glm::mat4 value) { }
+
+VariableInt::VariableInt() : Variable(), data(0) { }
+
+VariableInt::VariableInt(const VariableInt& other) {
+	data = other.data;
 }
 
-int Variable::getInt() {
-	return 0;
-}
-
-void Variable::setInt(int value) {
-}
-
-bool Variable::isFloat() {
-	return false;
-}
-
-float Variable::getFloat() {
-	return 0.0f;
-}
-
-void Variable::setFloat(float value) {
-}
-
-bool Variable::isVec3() {
-    return false;
-}
-
-glm::vec3 Variable::getVec3() {
-    return glm::vec3();
-}
-
-void Variable::setVec3(glm::vec3 value) {
-}
-
-bool Variable::isVec4() {
-    return false;
-}
-
-glm::vec4 Variable::getVec4() {
-    return glm::vec4();
-}
-
-void Variable::setVec4(glm::vec4 value) {
-}
-
-bool Variable::isMat4() {
-    return false;
-}
-
-glm::mat4 Variable::getMat4() {
-    return glm::mat4();
-}
-
-void Variable::setMat4(glm::mat4 value) {
+VariableInt& VariableInt::operator=(VariableInt other) {
+	data = other.data;
+	return *this;
 }
 
 VariableInt::VariableInt(int value) {
@@ -282,6 +287,17 @@ void VariableInt::setInt(int value) {
     data = value;
 }
 
+VariableFloat::VariableFloat() : Variable(), data(0.0f) { }
+
+VariableFloat::VariableFloat(const VariableFloat& other) {
+	data = other.data;
+}
+
+VariableFloat& VariableFloat::operator=(VariableFloat other) {
+	data = other.data;
+	return *this;
+}
+
 VariableFloat::VariableFloat(float value) {
     setFloat(value);
 }
@@ -296,6 +312,17 @@ float VariableFloat::getFloat() {
 
 void VariableFloat::setFloat(float value) {
     data = value;
+}
+
+VariableVec3::VariableVec3() : Variable(), data(glm::vec3(0.0f)) { }
+
+VariableVec3::VariableVec3(const VariableVec3& other) {
+	data = other.data;
+}
+
+VariableVec3& VariableVec3::operator=(VariableVec3 other) {
+	data = other.data;
+	return *this;
 }
 
 VariableVec3::VariableVec3(glm::vec3 value) {
@@ -314,6 +341,17 @@ void VariableVec3::setVec3(glm::vec3 value) {
     data = value;
 }
 
+VariableVec4::VariableVec4() : Variable(), data(glm::vec4(0.0f)) { }
+
+VariableVec4::VariableVec4(const VariableVec4& other) {
+	data = other.data;
+}
+
+VariableVec4& VariableVec4::operator=(VariableVec4 other) {
+	data = other.data;
+	return *this;
+}
+
 VariableVec4::VariableVec4(glm::vec4 value) {
     setVec4(value);
 }
@@ -328,6 +366,17 @@ glm::vec4 VariableVec4::getVec4() {
 
 void VariableVec4::setVec4(glm::vec4 value) {
     data = value;
+}
+
+VariableMat4::VariableMat4() : Variable(), data(glm::mat4(0.0f)) { }
+
+VariableMat4::VariableMat4(const VariableMat4& other) {
+	data = other.data;
+}
+
+VariableMat4& VariableMat4::operator=(VariableMat4 other) {
+	data = other.data;
+	return *this;
 }
 
 VariableMat4::VariableMat4(glm::mat4 value) {

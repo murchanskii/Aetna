@@ -25,7 +25,7 @@ void MainScript::update() {
     process_input();
 
     float speed = Application::get()->getTime() * 100.0f;
-    //cube->setRotation(glm::quat(cos(glm::radians(speed / 2)), 0, sin(glm::radians(speed / 2)) * 1.0f, 0));
+    cube->setRotation(glm::quat(cos(glm::radians(speed / 2)), 0, sin(glm::radians(speed / 2)) * 1.0f, 0));
 }
 
 void MainScript::render() {

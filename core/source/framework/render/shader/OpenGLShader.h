@@ -5,12 +5,18 @@
 
 class OpenGLShader : public Shader {
 public:
-	OpenGLShader(const char* path, Type type);
+	OpenGLShader(Type type);
 	int getID();
+
+	void save(const char* path) override;
+	void loadSource(const char* path) override;
+	void loadContents(const char* code) override;
 private:
-	int id;
+	int m_type;
+	int m_id;
 
 	void check_shader_compilation(int& shader_id);
+
 };
 
 #endif //AETNA_OPENGLSHADER_H

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <material name="container2_mat">
-	<shader type="vertex" path="framework/render/shader/default/vertex.glsl"/>
-	<shader type="fragment" path="framework/render/shader/default/fragment.glsl"/>
+	<shader type="vertex" path="core:materials/shaders/vertex.glsl"/>
+	<shader type="fragment" path="core:materials/shaders/fragment.glsl"/>
 
-	<texture name="albedo_texture" type="albedo" path="textures/container2.png"/>
-	<texture name="specular_texture" type="specular" path="textures/container2_specular.png"/>
+	<texture name="albedo_texture" type="albedo" path="core:materials/textures/container2.png"/>
+	<texture name="specular_texture" type="specular" path="core:materials/textures/container2_specular.png"/>
 
 	<variable name="albedo_color" type="vec4">1.0f 1.0f 1.0f 1.0f</variable>
 </material>

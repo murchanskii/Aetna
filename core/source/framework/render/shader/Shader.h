@@ -13,26 +13,21 @@ public:
 		FRAGMENT
 	};
 
-	Shader() : m_path(""), m_type() {
-
-	}
-
-	Shader(const char* path, Type type) {
-		m_path = path;
+	Shader(Type type) {
 		m_type = type;
-	}
-
-	const char* getPath() {
-		return m_path.c_str();
 	}
 
 	Type getType() {
 		return m_type;
 	}
 
+	virtual void save(const char* path) = 0;
+	virtual void loadSource(const char* path) = 0;
+	virtual void loadContents(const char *code) = 0;
+
 protected:
 	Type m_type;
-	std::string m_path;
+	std::string m_contents;
 };
 
 #endif //AETNA_SHADER_H

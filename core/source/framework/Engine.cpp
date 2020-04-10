@@ -133,9 +133,9 @@ void Engine::detect_assets_path() {
     if (assets_path_arg_i < 0 || assets_path_arg_i + 1 == getNumArgs()) {
         return;
     }
-    m_assets_path = getArg(assets_path_arg_i + 1);
+    m_assets_path = std::filesystem::absolute(Application::get()->getDirectory() + getArg(assets_path_arg_i + 1)).u8string();
     if (m_assets_path.back() != '\\' && m_assets_path.back() != '/') {
-        m_assets_path = m_assets_path + "/";
+        m_assets_path = m_assets_path + "\\";
     }
 }
 

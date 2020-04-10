@@ -38,7 +38,6 @@ public:
 					if (xml_node_material) {
 						std::string mat_name = xml_node_material.attribute("name").value();
 						if (!mat_name.empty()) {
-							// if (!m_map_ref_materials[mat_name])
 							m_map_ref_materials[mat_name] = entry.path().string().c_str(); 
 						}
 					}

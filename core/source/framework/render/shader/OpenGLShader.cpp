@@ -1,44 +1,22 @@
 #include "OpenGLShader.h"
 
 #include <glad/glad.h>
+#include <Utils.h>
 
-#include <sstream>
-#include <fstream>
 #include <iostream>
 
-OpenGLShader::OpenGLShader(const char* path, Type type) : Shader(path, type) {
-	std::ifstream shader_file(path, std::ios::in);
-	std::string shader_contents;
-
-	if (shader_file.is_open()) {
-		std::string line;
-		while (std::getline(shader_file, line)) {
-			shader_contents += "\n" + line;
-		}
-		shader_file.close();
-	} else {
-		std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-		id = -1;
-		return;
-	}
-
-	int shader_type = -1;
+OpenGLShader::OpenGLShader(Type type) : Shader(type), m_id(-1) {
+	m_type = -1;
 	switch (type) {
 	case Shader::Type::VERTEX:
-		shader_type = GL_VERTEX_SHADER;
+		m_type = GL_VERTEX_SHADER;
 		break;
 	case Shader::Type::FRAGMENT:
-		shader_type = GL_FRAGMENT_SHADER;
+		m_type = GL_FRAGMENT_SHADER;
 		break;
 	default:
 		break;
 	}
-
-	id = glCreateShader(shader_type);
-	const char* shader_contents_ch = shader_contents.c_str();
-	glShaderSource(id, 1, &shader_contents_ch, nullptr);
-	glCompileShader(id);
-	check_shader_compilation(id);
 }
 
 void OpenGLShader::check_shader_compilation(int& shader_id) {
@@ -54,6 +32,28 @@ void OpenGLShader::check_shader_compilation(int& shader_id) {
 	}
 }
 
+void OpenGLShader::save(const char* path) {
+	Utils::saveFile(path, m_contents, false);
+}
+
+void OpenGLShader::loadSource(const char* path) {
+	m_contents = Utils::readFile(path);
+	loadContents(m_contents.c_str());
+}
+
+void OpenGLShader::loadContents(const char* code) {
+	if (strlen(code) == 0) {
+		std::cerr << "Failed to load shader contents: empty()" << std::endl;
+		return;
+	}
+
+	m_contents = code;
+	m_id = glCreateShader(m_type);
+	glShaderSource(m_id, 1, &code, nullptr);
+	glCompileShader(m_id);
+	check_shader_compilation(m_id);
+}
+
 int OpenGLShader::getID() {
-	return id;
+	return m_id;
 }

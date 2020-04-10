@@ -1,67 +1,67 @@
 #include "Material.h"
-#include <framework/Materials.h>
-#include <framework/render/shader/OpenGLShaderProgram.h>
-#include <Utils.h>
 #include <framework/Engine.h>
+#include <framework/render/shader/OpenGLShaderProgram.h>
+#include <framework/Materials.h>
+#include <Utils.h>
 
 #include <pugixml.hpp>
 
 #include <iostream>
 
 Material::Material() {
-	default_shader_program_used = true;
-	m_shader_program = new OpenGLShaderProgram();
-	
-	tex_albedo.texture = new Texture();
-	tex_normal.texture = new Texture();
-	tex_specular.texture = new Texture();
+	initialize_shader_program_and_shaders();
 }
 
 Material::~Material() {
-	if (default_shader_program_used) {
-		delete m_shader_program;
-	}
-
-	if (tex_albedo.texture) {
-		delete tex_albedo.texture;
-	}
-
-	if (tex_normal.texture) {
-		delete tex_normal.texture;
-	}
-
-	if (tex_specular.texture) {
-		delete tex_specular.texture;
-	}
-}
-
-ShaderProgram *Material::getShaderProgram() {
-	return m_shader_program;
-}
-
-void Material::setShaderProgram(ShaderProgram* shdr_prog) {
-	default_shader_program_used = false;
-	m_shader_program = shdr_prog;
+	remove_shader_program_and_shaders();
 }
 
 void Material::save(const char* path) {
+	OpenGLShaderProgram* ogl_shader_program = dynamic_cast<OpenGLShaderProgram*>(m_shader_program);
+	OpenGLShader* ogl_vertex_shader = dynamic_cast<OpenGLShader*>(m_vertex_shader);
+	OpenGLShader* ogl_fragment_shader = dynamic_cast<OpenGLShader*>(m_fragment_shader);
+	std::string cur_material_path = Materials::get()->getMaterialPath(getName());
+	cur_material_path = cur_material_path.substr(0, cur_material_path.rfind('/') + 1);
+	std::string processed_cur_material_path = Utils::getPathXMLFromAbsolute(cur_material_path);
+
+	if (m_vertex_shader_path.empty()) {
+		std::string shader_name = m_name + "_v.glsl";
+		m_vertex_shader_path = processed_cur_material_path + shader_name;
+		m_vertex_shader->save((cur_material_path + shader_name).c_str());
+	}
+
+	if (m_fragment_shader_path.empty()) {
+		std::string shader_name = m_name + "_f.glsl";
+		m_fragment_shader_path = processed_cur_material_path + shader_name;
+		m_fragment_shader->save((cur_material_path + shader_name).c_str());
+	}
+
 	pugi::xml_document mat_xml;
 	pugi::xml_node xml_node_material = mat_xml.append_child("material");
 	xml_node_material.append_attribute("name").set_value(m_name.c_str());
 	pugi::xml_node xml_node_vertex_shdr = xml_node_material.append_child("shader");
 	xml_node_vertex_shdr.append_attribute("type").set_value("vertex");
-	if (m_shader_program->isVertexShaderBinded()) {
-		xml_node_vertex_shdr.append_attribute("path").set_value(m_shader_program->getVertexShaderPath());
+	if (ogl_shader_program->isShaderAttached(ogl_vertex_shader)) {
+		if (m_vertex_shader_path.empty()) {
+			std::cerr << "Failed to save vertex shader path: " << m_name << std::endl;
+		}
+		else {
+			xml_node_vertex_shdr.append_attribute("path").set_value(m_vertex_shader_path.c_str());
+		}
 	}
 	pugi::xml_node xml_node_fragment_shdr = xml_node_material.append_child("shader");
 	xml_node_fragment_shdr.append_attribute("type").set_value("fragment");
-	if (m_shader_program->isFragmentShaderBinded()) {
-		xml_node_fragment_shdr.append_attribute("path").set_value(m_shader_program->getFragmentShaderPath());
+	if (ogl_shader_program->isShaderAttached(ogl_fragment_shader)) {
+		if (m_fragment_shader_path.empty()) {
+			std::cerr << "Failed to save fragment shader path: " << m_name << std::endl;
+		} else {
+			xml_node_fragment_shdr.append_attribute("path").set_value(m_fragment_shader_path.c_str());
+		}
 	}
 
 	for (int i = 0; i < m_shader_program->getNumVariables(); ++i) {
 		pugi::xml_node xml_node_variable = xml_node_material.append_child("variable");
-		xml_node_variable.append_attribute("name").set_value(m_shader_program->getVariableName(i).c_str());
+		xml_node_variable.append_attribute("name").set_value(m_shader_program->getVariableName(i));
 		Variable* var = m_shader_program->getVariable(i);
 		std::string type_name;
 		if (var->isInt()) {
@@ -84,18 +84,8 @@ void Material::save(const char* path) {
 }
 
 int Material::load(const char* path) {
-	auto remove_shader_program = [&]() {
-		delete m_shader_program;
-		m_shader_program = nullptr;
-		default_shader_program_used = false; 
-	};
-
-	if (m_shader_program) {
-		remove_shader_program();
-	}
-
-	m_shader_program = new OpenGLShaderProgram();
-	default_shader_program_used = true;
+	remove_shader_program_and_shaders();
+	initialize_shader_program_and_shaders();
 
 	pugi::xml_document mat_xml;
 	pugi::xml_parse_result xml_res = mat_xml.load_file(path);
@@ -105,19 +95,25 @@ int Material::load(const char* path) {
 			setName(std::string(xml_node_material.attribute("name").value()));
 			pugi::xml_node xml_node_vertex_shader = xml_node_material.find_child_by_attribute("shader", "type", "vertex");
 			if (xml_node_vertex_shader) {
-				m_shader_program->setVertexShader((std::string(Engine::get()->getCorePath()) + xml_node_vertex_shader.attribute("path").value()).c_str());
-				if (strcmp(m_shader_program->getVertexShaderPath(), "") == 0) {
-					remove_shader_program();
+				std::string shdr_path = xml_node_vertex_shader.attribute("path").value();
+				std::string abs_shdr_path = Utils::getAbsolutePathFromXML(shdr_path);
+				if (abs_shdr_path.empty()) {
+					std::cerr << "Material \'" << getName() << "\'Failed to specify shader path: " << shdr_path << std::endl;
 					return -1;
 				}
+				setVertexShaderSource(abs_shdr_path.c_str());
+				m_vertex_shader_path = shdr_path;
 			}
 			pugi::xml_node xml_node_fragment_shader = xml_node_material.find_child_by_attribute("shader", "type", "fragment");
 			if (xml_node_fragment_shader) {
-				m_shader_program->setFragmentShader((std::string(Engine::get()->getCorePath()) + xml_node_fragment_shader.attribute("path").value()).c_str());
-				if (strcmp(m_shader_program->getFragmentShaderPath(), "") == 0) {
-					remove_shader_program();
+				std::string shdr_path = xml_node_fragment_shader.attribute("path").value();
+				std::string abs_shdr_path = Utils::getAbsolutePathFromXML(shdr_path);
+				if (abs_shdr_path.empty()) {
+					std::cerr << "Material \'" << getName() << "\'Failed to specify shader path: " << shdr_path << std::endl;
 					return -1;
 				}
+				setFragmentShaderSource(abs_shdr_path.c_str());
+				m_fragment_shader_path = shdr_path;
 			}
 
 			for (pugi::xml_node variable_node = xml_node_material.child("variable");
@@ -136,31 +132,21 @@ int Material::load(const char* path) {
 				texture_node;
 				texture_node = texture_node.next_sibling("texture")) {
 				const char* tex_name = texture_node.attribute("name").value();
-				const char* tex_type = texture_node.attribute("type").value();
 				const char* tex_path = texture_node.attribute("path").value();
-
-				TextureVariable* tex_to_load = nullptr;
-				if (strcmp(tex_type, "albedo") == 0) {
-					tex_to_load = &tex_albedo;
-				} else if (strcmp(tex_type, "normal") == 0) {
-					tex_to_load = &tex_normal;
-				} else if (strcmp(tex_type, "specular") == 0) {
-					tex_to_load = &tex_specular;
+				std::string abs_tex_path = Utils::getAbsolutePathFromXML(tex_path);
+				if (abs_tex_path.empty()) {
+					std::cerr << "Material \'" << getName() << "\'Failed to specify texture path: " << tex_path << std::endl;
+					return -1;
 				}
 
-				if (!tex_to_load) {
-					std::cerr << "Texture type: " << tex_type << " unknown" << std::endl;
-					continue;
-				}
-
-				tex_to_load->name = tex_name;
-				tex_to_load->texture->load(tex_path);
+				Texture texture;
+				texture.load(abs_tex_path.c_str());
+				m_shader_program->setTexture(tex_name, texture);
 			}
 
 			return 1;
 		}
 	}
-	remove_shader_program();
 	return -1;
 }
 
@@ -169,46 +155,103 @@ void Material::setName(std::string name)
 	m_name = name;
 }
 
-std::string Material::getName()
+const char* Material::getName()
 {
-	return m_name;
+	return m_name.c_str();
 }
 
-Texture* Material::getTexture(TextureType type) {
-	switch (type) {
-	case Material::TextureType::ALBEDO:
-		return tex_albedo.texture;
-	case Material::TextureType::NORMAL:
-		return tex_normal.texture;
-	case Material::TextureType::SPECULAR:
-		return tex_specular.texture;
-	default:
-		return nullptr;
+void Material::setVariable(const char* name, Variable *variable) {
+	m_shader_program->setVariable(name, variable);
+}
+
+Variable *Material::getVariable(const char* name) {
+	return m_shader_program->getVariable(name);
+}
+
+const char* Material::getVariableName(int index) {
+	return m_shader_program->getVariableName(index);
+}
+
+int Material::getNumVariables() {
+	return m_shader_program->getNumVariables();
+}
+
+Texture Material::getTexture(const char* name) {
+	return m_shader_program->getTexture(name);
+}
+
+const char* Material::getTextureName(int index) {
+	return m_shader_program->getTextureName(index);
+}
+
+void Material::setTexture(const char* name, Texture texture) {
+	m_shader_program->setTexture(name, texture);
+}
+
+int Material::getNumTextures() {
+	return m_shader_program->getNumTextures();
+}
+
+void Material::setVertexShaderSource(const char* path) {
+	// todo: save m_vertex_shader_path = "core/assets:<...>"
+	m_vertex_shader->loadSource(path);
+	m_shader_program->addShader(m_vertex_shader);
+	if (program_ready_to_link()) {
+		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
 	}
 }
 
-const char* Material::getTextureName(TextureType type) {
-	std::string *result;
-	switch (type) {
-	case Material::TextureType::ALBEDO:
-		result = &tex_albedo.name;
-		break;
-	case Material::TextureType::NORMAL:
-		result = &tex_normal.name;
-		break;
-	case Material::TextureType::SPECULAR:
-		result = &tex_specular.name;
-		break;
+void Material::setVertexShaderContents(const char* code) {
+	m_vertex_shader->loadContents(code);
+	if (program_ready_to_link()) {
+		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
 	}
-	return result->c_str();
 }
 
-void Material::setTexture(TextureType type, const char* path) {
-
+void Material::setFragmentShaderSource(const char* path) {
+	// todo: save m_fragment_shader_path = "core/assets:<...>"
+	m_fragment_shader->loadSource(path);
+	m_shader_program->addShader(m_fragment_shader);
+	if (program_ready_to_link()) {
+		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
+	}
 }
 
-void Material::setTexture(TextureType type, Texture* texture) {
+void Material::setFragmentShaderContents(const char* code) {
+	m_fragment_shader->loadContents(code);
+	if (program_ready_to_link()) {
+		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
+	}
+}
 
+bool Material::program_ready_to_link() {
+	OpenGLShaderProgram* ogl_shader_program = dynamic_cast<OpenGLShaderProgram*>(m_shader_program);
+	OpenGLShader* ogl_vertex_shader = dynamic_cast<OpenGLShader*>(m_vertex_shader);
+	OpenGLShader* ogl_fragment_shader = dynamic_cast<OpenGLShader*>(m_fragment_shader);
+	return ogl_shader_program->isShaderAttached(ogl_vertex_shader) && ogl_shader_program->isShaderAttached(ogl_fragment_shader);
+}
+
+void Material::initialize_shader_program_and_shaders() {
+	m_shader_program = new OpenGLShaderProgram();
+	m_vertex_shader = new OpenGLShader(Shader::Type::VERTEX);
+	m_fragment_shader = new OpenGLShader(Shader::Type::FRAGMENT);
+}
+
+void Material::remove_shader_program_and_shaders() {
+	if (m_fragment_shader) {
+		delete m_fragment_shader;
+		m_fragment_shader = nullptr;
+	}
+
+	if (m_vertex_shader) {
+		delete m_vertex_shader;
+		m_vertex_shader = nullptr;
+	}
+
+	if (m_shader_program) {
+		delete m_shader_program;
+		m_shader_program = nullptr;
+	}
 }
 
 void Material::apply() {

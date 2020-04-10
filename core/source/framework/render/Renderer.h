@@ -8,8 +8,7 @@
 
 class Renderer {
 public:
-    virtual ~Renderer() {
-    }
+    virtual ~Renderer() { }
 
     virtual bool isInitialized() = 0;
 
@@ -20,6 +19,26 @@ public:
     
 protected:
     Renderer() { }
+
+    virtual void initialize_skybox_buffer() = 0;
+    virtual void initialize_shadow_buffer() = 0;
+    virtual void initialize_gbuffer() = 0;
+    virtual void initialize_depth_buffer() = 0;
+    virtual void initialize_deferred_light_buffer() = 0;
+    virtual void initialize_auxiliary_buffer() = 0;
+    virtual void initialize_postmaterials_buffer() = 0;
+    virtual void initialize_gui_buffer() = 0;
+
+    virtual void render_skybox_buffer() = 0;
+    virtual void calculate_geometry() = 0;
+    virtual void render_shadow_buffer() = 0;
+    virtual void render_gbuffer() = 0;
+    virtual void render_depth_buffer() = 0;
+    virtual void render_deferred_light_buffer() = 0;
+    virtual void render_auxiliary_buffer() = 0;
+    virtual void render_postmaterials_buffer() = 0;
+    virtual void render_gui_buffer() = 0;
+
 
     friend class Game;
         

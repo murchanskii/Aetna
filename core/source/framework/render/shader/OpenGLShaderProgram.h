@@ -1,46 +1,58 @@
-//
-// Created by Candles on 19.01.2020.
-//
-
 #ifndef AETNA_OPENGLSHADERPROGRAM_H
 #define AETNA_OPENGLSHADERPROGRAM_H
 
 #include <framework/render/shader/ShaderProgram.h>
 #include <framework/render/shader/OpenGLShader.h>
 
-#include <string>
-#include <map>
-
 class OpenGLShaderProgram : public ShaderProgram {
 public:
     OpenGLShaderProgram();
     virtual ~OpenGLShaderProgram();
 
-    void setVertexShader(const char *path) override;
-    void setFragmentShader(const char *path) override;
-    bool isVertexShaderBinded() override;
-    bool isFragmentShaderBinded() override;
-    const char* getVertexShaderPath() override;
-    const char* getFragmentShaderPath() override;
+    void addShader(Shader* shader) override;
+    void addShader(OpenGLShader* shader);
+    void removeShader(Shader *shader) override;
+    void removeShader(OpenGLShader* shader);
+    bool isShaderAttached(OpenGLShader* shader);
+    void link();
     void use() override;
 
     int getProgramID();
 
-    void setVariable(std::string name, Variable* var) override;
-    Variable* getVariable(std::string name) override;
-    Variable* getVariable(int index) override;
-    std::string getVariableName(int index) override;
+    void setVariable(const char* name, Variable *var) override;
+    Variable *getVariable(const char* name) override;
+    Variable *getVariable(int index) override;
+    int findVariable(const char* name) override;
+    const char* getVariableName(int index) override;
     int getNumVariables() override;
+
+    void setTexture(const char* name, Texture var) override;
+    Texture getTexture(const char* name) override;
+    Texture getTexture(int index) override;
+    int findTexture(const char* name) override;
+    const char* getTextureName(int index) override;
+    int getNumTextures() override;
     
 private:
     int m_program_id;
-    OpenGLShader* m_vertex_shader;
-    OpenGLShader* m_fragment_shader;
+    std::vector<OpenGLShader*> m_vec_shaders;
 
+    int find_shader(OpenGLShader* shader);
     void check_program_linking(int &program_id);
-    int get_var_index_by_name(std::string name);
 
-    std::vector<std::pair<std::string, Variable*>> m_variables;
+    struct VariableInfo {
+        std::string name;
+        Variable *data;
+    };
+
+    struct TextureInfo {
+        unsigned int location;
+        std::string name;
+        Texture *data;
+    };
+
+    std::vector<VariableInfo> m_variables;
+    std::vector<TextureInfo> m_textures;
 };
 
 

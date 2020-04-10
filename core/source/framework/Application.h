@@ -24,7 +24,7 @@ public:
     virtual void swap() = 0;
 	virtual void terminate() = 0;
 
-    const char* getDirectory();
+    std::string getDirectory();
 
     virtual int getWindowWidth() = 0;
     virtual int getWindowHeight() = 0;

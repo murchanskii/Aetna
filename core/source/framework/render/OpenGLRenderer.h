@@ -21,19 +21,29 @@ public:
 
 protected:
     struct OpenGLObject {
-        struct OpenGLTexture {
-            unsigned int location;
-            int num;
-            std::string name;
-        };
-
         Object *scene_object;
         unsigned int VAO;
         std::vector<unsigned int> vec_VBOs;
-        std::vector<OpenGLTexture*> vec_textures;
     };
 
-    void initialize_framebuffers();
+    void initialize_skybox_buffer() override;
+    void initialize_shadow_buffer() override;
+    void initialize_gbuffer() override;
+    void initialize_depth_buffer() override;
+    void initialize_deferred_light_buffer() override;
+    void initialize_auxiliary_buffer() override;
+    void initialize_postmaterials_buffer() override;
+    void initialize_gui_buffer() override;
+
+    void render_skybox_buffer() override;
+    void calculate_geometry() override;
+    void render_shadow_buffer() override;
+    void render_gbuffer() override;
+    void render_depth_buffer() override;
+    void render_deferred_light_buffer() override;
+    void render_auxiliary_buffer() override;
+    void render_postmaterials_buffer() override;
+    void render_gui_buffer() override;
 
     void addObjectToRender(Object *obj) override;
     void removeObjectFromRender(Object *obj) override;
@@ -50,12 +60,6 @@ private:
     bool m_initialized;
     
     std::vector<OpenGLObject*> m_vec_gl_objects;
-
-    // scene framebuffer
-    unsigned int quadVAO, quadVBO;
-    unsigned int framebuffer;
-    unsigned int textureColorbuffer;
-    OpenGLShaderProgram* shprog_framebuffer = nullptr;
 };
 
 

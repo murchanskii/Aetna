@@ -11,6 +11,9 @@ class Variable;
 class Utils {
 public:
 	static std::string readFile(const std::string &path);
+	static void saveFile(const std::string &path, const std::string &contents, bool binary);
+	static std::string getAbsolutePathFromXML(const std::string &path);
+	static std::string getPathXMLFromAbsolute(const std::string& path);
 	static std::vector<std::string> splitString(const std::string &str, const std::string &delimiters);
 	static void parseXmlVariable(pugi::xml_node variable_node, Variable** var);
 	static std::string getStringVariable(Variable* variable);
@@ -32,6 +35,10 @@ public:
 
 class Variable {
 public:
+	Variable();
+	Variable(const Variable& other);
+	Variable& operator=(Variable other);
+
 	virtual bool isInt();
 	virtual int getInt();
 	virtual void setInt(int value);
@@ -55,6 +62,10 @@ public:
 
 class VariableInt : public Variable {
 public:
+	VariableInt();
+	VariableInt(const VariableInt& other);
+	VariableInt& operator=(VariableInt other);
+
 	explicit VariableInt(int value);
 	bool isInt() override;
 	int getInt() override;
@@ -66,6 +77,10 @@ private:
 
 class VariableFloat : public Variable {
 public:
+	VariableFloat();
+	VariableFloat(const VariableFloat& other);
+	VariableFloat& operator=(VariableFloat other);
+
 	explicit VariableFloat(float value);
 	bool isFloat() override;
 	float getFloat() override;
@@ -77,6 +92,10 @@ private:
 
 class VariableVec3 : public Variable {
 public:
+	VariableVec3();
+	VariableVec3(const VariableVec3& other);
+	VariableVec3& operator=(VariableVec3 other);
+
 	explicit VariableVec3(glm::vec3 value);
 	bool isVec3() override;
 	glm::vec3 getVec3() override;
@@ -88,6 +107,10 @@ private:
 
 class VariableVec4 : public Variable {
 public:
+	VariableVec4();
+	VariableVec4(const VariableVec4& other);
+	VariableVec4& operator=(VariableVec4 other);
+
 	explicit VariableVec4(glm::vec4 value);
 	bool isVec4() override;
 	glm::vec4 getVec4() override;
@@ -99,6 +122,10 @@ private:
 
 class VariableMat4 : public Variable {
 public:
+	VariableMat4();
+	VariableMat4(const VariableMat4& other);
+	VariableMat4& operator=(VariableMat4 other);
+
 	explicit VariableMat4(glm::mat4 value);
 	bool isMat4() override;
 	glm::mat4 getMat4() override;

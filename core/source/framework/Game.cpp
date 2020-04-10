@@ -145,9 +145,9 @@ void Game::update() {
             getEntityFromScene(i)->update();
 
             Object* obj = dynamic_cast<Object*>(getEntityFromScene(i));
-            if (obj && obj->getMaterial() && obj->getMaterial()->getShaderProgram()) {
-                obj->getMaterial()->getShaderProgram()->setVariable(
-                    std::string("view_position"),
+            if (obj && obj->getMaterial()) {
+                obj->getMaterial()->setVariable(
+                    "view_position",
                     &VariableVec3(getCamera()->getPosition()));
             }
 
@@ -158,24 +158,24 @@ void Game::update() {
                     if (light_dir) {
                         int light_dir_index = std::distance(m_vec_light_dir_indices.begin(),
                             std::find(m_vec_light_dir_indices.begin(), m_vec_light_dir_indices.end(), j));
-                        if (obj && obj->getMaterial() && obj->getMaterial()->getShaderProgram()) {
-                            obj->getMaterial()->getShaderProgram()->setVariable(
-                                std::string("n_lights_directional"),
+                        if (obj && obj->getMaterial() && obj->getMaterial()) {
+                            obj->getMaterial()->setVariable(
+                                "n_lights_directional",
                                 &VariableInt(m_vec_light_dir_indices.size()));
-                            obj->getMaterial()->getShaderProgram()->setVariable(
-                                std::string("lights_directional[" + std::to_string(light_dir_index) + "].direction"),
+                            obj->getMaterial()->setVariable(
+                                ("lights_directional[" + std::to_string(light_dir_index) + "].direction").c_str(),
                                 &VariableVec3(light_dir->getDirection()));
-                            obj->getMaterial()->getShaderProgram()->setVariable(
-                                std::string("lights_directional[" + std::to_string(light_dir_index) + "].ambient"),
+                            obj->getMaterial()->setVariable(
+                                ("lights_directional[" + std::to_string(light_dir_index) + "].ambient").c_str(),
                                 &VariableVec3(light_dir->getAmbient()));
-                            obj->getMaterial()->getShaderProgram()->setVariable(
-                                std::string("lights_directional[" + std::to_string(light_dir_index) + "].diffuse"),
+                            obj->getMaterial()->setVariable(
+                                ("lights_directional[" + std::to_string(light_dir_index) + "].diffuse").c_str(),
                                 &VariableVec3(light_dir->getDiffuse()));
-                            obj->getMaterial()->getShaderProgram()->setVariable(
-                                std::string("lights_directional[" + std::to_string(light_dir_index) + "].specular"),
+                            obj->getMaterial()->setVariable(
+                                ("lights_directional[" + std::to_string(light_dir_index) + "].specular").c_str(),
                                 &VariableVec3(light_dir->getSpecular()));
-                            obj->getMaterial()->getShaderProgram()->setVariable(
-                                std::string("lights_directional[" + std::to_string(light_dir_index) + "].light_color"),
+                            obj->getMaterial()->setVariable(
+                                ("lights_directional[" + std::to_string(light_dir_index) + "].light_color").c_str(),
                                 &VariableVec4(light_dir->getColor()));
                         }
                     } else {
@@ -184,40 +184,40 @@ void Game::update() {
                             int light_point_index = std::distance(m_vec_light_point_indices.begin(),
                                 std::find(m_vec_light_point_indices.begin(), m_vec_light_point_indices.end(), j));
                             Object* obj = dynamic_cast<Object*>(getEntityFromScene(i));
-                            if (obj && obj->getMaterial() && obj->getMaterial()->getShaderProgram()) {
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("n_lights_point"),
+                            if (obj && obj->getMaterial()) {
+                                obj->getMaterial()->setVariable(
+                                    "n_lights_point",
                                     &VariableInt(m_vec_light_point_indices.size()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].position"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].position").c_str(),
                                     &VariableVec3(light_point->getPosition()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].ambient"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].ambient").c_str(),
                                     &VariableVec3(light_point->getAmbient()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].diffuse"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].diffuse").c_str(),
                                     &VariableVec3(light_point->getDiffuse()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].specular"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].specular").c_str(),
                                     &VariableVec3(light_point->getSpecular()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].light_color"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].light_color").c_str(),
                                     &VariableVec4(light_point->getColor()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].constant"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].constant").c_str(),
                                     &VariableFloat(light_point->getConstant()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].linear"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].linear").c_str(),
                                     &VariableFloat(light_point->getLinear()));
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("lights_point[" + std::to_string(light_point_index) + "].quadratic"),
+                                obj->getMaterial()->setVariable(
+                                    ("lights_point[" + std::to_string(light_point_index) + "].quadratic").c_str(),
                                     &VariableFloat(light_point->getQuadratic()));
                             }
                         } else {
                             LightSpot* light_spot = dynamic_cast<LightSpot*>(check_entity);
                             if (light_spot) {
-                                obj->getMaterial()->getShaderProgram()->setVariable(
-                                    std::string("n_lights_spot"),
+                                obj->getMaterial()->setVariable(
+                                    "n_lights_spot",
                                     &VariableInt(m_vec_light_spot_indices.size()));
                             }
                         }
@@ -290,13 +290,13 @@ void Game::saveScene(const char* path) {
             
             if (object->getMaterial()) {
                 pugi::xml_node xml_node_material = xml_node_object.append_child("material");
-                xml_node_material.append_attribute("name").set_value(object->getMaterial()->getName().c_str());
+                xml_node_material.append_attribute("name").set_value(object->getMaterial()->getName());
                 for (int j = 0;
-                    object->getMaterial()->getShaderProgram() && j < object->getMaterial()->getShaderProgram()->getNumVariables();
+                    object->getMaterial() && j < object->getMaterial()->getNumVariables();
                     ++j) {
                     pugi::xml_node xml_node_mat_var = xml_node_material.append_child("variable");
-                    Variable* var = object->getMaterial()->getShaderProgram()->getVariable(object->getMaterial()->getShaderProgram()->getVariableName(j));
-                    xml_node_mat_var.append_attribute("name").set_value(object->getMaterial()->getShaderProgram()->getVariableName(j).c_str());
+                    Variable *var = object->getMaterial()->getVariable(object->getMaterial()->getVariableName(j));
+                    xml_node_mat_var.append_attribute("name").set_value(object->getMaterial()->getVariableName(j));
                     if (var->isInt()) {
                         xml_node_mat_var.append_attribute("type").set_value("int");
                         xml_node_mat_var.append_child(pugi::node_pcdata).set_value(std::to_string(var->getInt()).c_str());
@@ -381,7 +381,7 @@ void Game::loadScene(const char* path)
                         Variable* var = nullptr;
                         Utils::parseXmlVariable(variable_node, &var);
                         const char* var_name = variable_node.attribute("name").value();
-                        material->getShaderProgram()->setVariable(var_name, var);
+                        material->setVariable(var_name, var);
                     }
 
                     for (pugi::xml_node texture_node = xml_node_material.child("texture");
