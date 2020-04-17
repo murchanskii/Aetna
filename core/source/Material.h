@@ -9,6 +9,7 @@ public:
 	~Material();
 
 	void apply();
+	void use();
 	
 	void save(const char *path);
 	int load(const char *path);
@@ -26,21 +27,20 @@ public:
 	void setTexture(const char* name, Texture texture); 
 	int getNumTextures();
 
-	void setVertexShaderSource(const char* path);
-	void setVertexShaderContents(const char* code);
+	void addVertexShaderSource(const char* path);
+	void addVertexShaderContents(const char* code);
 
-	void setFragmentShaderSource(const char* path);
-	void setFragmentShaderContents(const char* code);
+	void addFragmentShaderSource(const char* path);
+	void addFragmentShaderContents(const char* code);
 
 private:
 	ShaderProgram* m_shader_program = nullptr;
-	Shader* m_vertex_shader = nullptr;
-	Shader* m_fragment_shader = nullptr;
+	std::vector<Shader*> m_vec_vertex_shaders;
+	std::vector<Shader*> m_vec_fragment_shaders;
 	std::string m_name;
-	std::string m_vertex_shader_path;
-	std::string m_fragment_shader_path;
+	std::vector<std::string> m_vec_vertex_shader_paths;
+	std::vector<std::string> m_vec_fragment_shader_paths;
 
-	bool program_ready_to_link();
 	void initialize_shader_program_and_shaders();
 	void remove_shader_program_and_shaders();
 };

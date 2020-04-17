@@ -4,7 +4,6 @@ project(AetnaCore)
 include_directories("${ENGINE_PATH}/../dependencies/glad/include"
                     "${ENGINE_PATH}/../dependencies/GLFW/include"
                     "${ENGINE_PATH}/../dependencies/glm/include"
-                    "${ENGINE_PATH}/../dependencies/SOIL/include"
                     "${ENGINE_PATH}/../dependencies/pugixml/include"
                     "${ENGINE_PATH}/../dependencies/stb_image/include"
 					"${ENGINE_PATH}"
@@ -21,10 +20,6 @@ elseif(MINGW)
 	set_property(TARGET glfw3 PROPERTY IMPORTED_IMPLIB "${ENGINE_PATH}/../dependencies/GLFW/lib/mingw/libglfw3dll.a")
 	configure_file(${ENGINE_PATH}/../dependencies/GLFW/lib/mingw/glfw3.dll ${CMAKE_CURRENT_BINARY_DIR}/../glfw3.dll COPYONLY)
 endif()
-
-add_library(SOIL STATIC IMPORTED)
-set_property(TARGET SOIL PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${ENGINE_PATH}/../dependencies/SOIL/include")
-set_property(TARGET SOIL PROPERTY IMPORTED_LOCATION "${ENGINE_PATH}/../dependencies/SOIL/lib/SOIL.lib")
 
 set(AETNA_CORE_HEADERS
 	Material.h
@@ -85,5 +80,4 @@ add_library(AetnaCore
 
 target_link_libraries(AetnaCore
     glfw3
-    SOIL
 )

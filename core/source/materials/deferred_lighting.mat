@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<material name="deferred_lighting">
+	<shader type="vertex" path="core:materials/shaders/deferred_lighting_v.glsl"/>
+	<shader type="fragment" path="core:materials/shaders/deferred_lighting_f.glsl"/>
+</material>

@@ -204,6 +204,7 @@ void OpenGLShaderProgram::setTexture(const char* name, Texture var) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex_info->data->getWidth(), tex_info->data->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_info->data->getData());
             glGenerateMipmap(GL_TEXTURE_2D);
         }
+        setVariable(("material." + tex_info->name).c_str(), &VariableInt(m_textures.size() - 1));
     }
 }
 

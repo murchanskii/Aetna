@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<material name="container2_mat">
-	<shader type="vertex" path="core:materials/shaders/vertex.glsl"/>
-	<shader type="fragment" path="core:materials/shaders/fragment.glsl"/>
+<material name="container2">
+	<shader type="vertex" path="core:materials/shaders/gbuffer_v.glsl"/>
+	<shader type="fragment" path="core:materials/shaders/gbuffer_f.glsl"/>
 
 	<texture name="albedo_texture" type="albedo" path="core:materials/textures/container2.png"/>
 	<texture name="specular_texture" type="specular" path="core:materials/textures/container2_specular.png"/>

@@ -19,13 +19,14 @@ void MainScript::initialize() {
 void MainScript::update() {
     Application::get()->setWindowTitle(std::string(
         std::string(AETNA_PROJECT_NAME) + std::string(" | ") +
+        Utils::intToString(Application::get()->getWindowWidth()) + " x " + Utils::intToString(Application::get()->getWindowHeight()) + std::string(" | ") +
         std::string("Time: ") + Utils::floatToString(Application::get()->getTime()) + std::string(" | ") + 
         std::string("FPS: ") + Utils::intToString(Application::get()->getFPS())
     ).c_str());
     process_input();
 
     float speed = Application::get()->getTime() * 100.0f;
-    cube->setRotation(glm::quat(cos(glm::radians(speed / 2)), 0, sin(glm::radians(speed / 2)) * 1.0f, 0));
+    //cube->setRotation(glm::quat(cos(glm::radians(speed / 2)), 0, sin(glm::radians(speed / 2)) * 1.0f, 0));
 }
 
 void MainScript::render() {

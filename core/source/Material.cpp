@@ -18,44 +18,49 @@ Material::~Material() {
 
 void Material::save(const char* path) {
 	OpenGLShaderProgram* ogl_shader_program = dynamic_cast<OpenGLShaderProgram*>(m_shader_program);
-	OpenGLShader* ogl_vertex_shader = dynamic_cast<OpenGLShader*>(m_vertex_shader);
-	OpenGLShader* ogl_fragment_shader = dynamic_cast<OpenGLShader*>(m_fragment_shader);
 	std::string cur_material_path = Materials::get()->getMaterialPath(getName());
 	cur_material_path = cur_material_path.substr(0, cur_material_path.rfind('/') + 1);
 	std::string processed_cur_material_path = Utils::getPathXMLFromAbsolute(cur_material_path);
 
-	if (m_vertex_shader_path.empty()) {
-		std::string shader_name = m_name + "_v.glsl";
-		m_vertex_shader_path = processed_cur_material_path + shader_name;
-		m_vertex_shader->save((cur_material_path + shader_name).c_str());
-	}
-
-	if (m_fragment_shader_path.empty()) {
-		std::string shader_name = m_name + "_f.glsl";
-		m_fragment_shader_path = processed_cur_material_path + shader_name;
-		m_fragment_shader->save((cur_material_path + shader_name).c_str());
-	}
-
 	pugi::xml_document mat_xml;
 	pugi::xml_node xml_node_material = mat_xml.append_child("material");
 	xml_node_material.append_attribute("name").set_value(m_name.c_str());
-	pugi::xml_node xml_node_vertex_shdr = xml_node_material.append_child("shader");
-	xml_node_vertex_shdr.append_attribute("type").set_value("vertex");
-	if (ogl_shader_program->isShaderAttached(ogl_vertex_shader)) {
-		if (m_vertex_shader_path.empty()) {
-			std::cerr << "Failed to save vertex shader path: " << m_name << std::endl;
-		}
-		else {
-			xml_node_vertex_shdr.append_attribute("path").set_value(m_vertex_shader_path.c_str());
+
+	for (int i = 0; i < m_vec_vertex_shaders.size(); ++i) {
+		OpenGLShader* ogl_shader = dynamic_cast<OpenGLShader*>(m_vec_vertex_shaders[i]);
+		pugi::xml_node xml_node_vertex_shdr = xml_node_material.append_child("shader");
+		xml_node_vertex_shdr.append_attribute("type").set_value("vertex");
+		if (ogl_shader_program->isShaderAttached(ogl_shader)) {
+			std::string m_shader_path = m_vec_vertex_shader_paths[i];
+			if (m_shader_path.empty()) {
+				std::string shader_name = m_name + "_v.glsl";
+				m_shader_path = processed_cur_material_path + shader_name;
+				ogl_shader->save((cur_material_path + shader_name).c_str());
+			}
+			if (m_shader_path.empty()) {
+				std::cerr << "Failed to save vertex shader path: " << m_name << std::endl;
+			} else {
+				xml_node_vertex_shdr.append_attribute("path").set_value(m_shader_path.c_str());
+			}
 		}
 	}
-	pugi::xml_node xml_node_fragment_shdr = xml_node_material.append_child("shader");
-	xml_node_fragment_shdr.append_attribute("type").set_value("fragment");
-	if (ogl_shader_program->isShaderAttached(ogl_fragment_shader)) {
-		if (m_fragment_shader_path.empty()) {
-			std::cerr << "Failed to save fragment shader path: " << m_name << std::endl;
-		} else {
-			xml_node_fragment_shdr.append_attribute("path").set_value(m_fragment_shader_path.c_str());
+
+	for (int i = 0; i < m_vec_fragment_shaders.size(); ++i) {
+		OpenGLShader* ogl_shader = dynamic_cast<OpenGLShader*>(m_vec_fragment_shaders[i]);
+		pugi::xml_node xml_node_fragment_shdr = xml_node_material.append_child("shader");
+		xml_node_fragment_shdr.append_attribute("type").set_value("fragment");
+		if (ogl_shader_program->isShaderAttached(ogl_shader)) {
+			std::string m_shader_path = m_vec_fragment_shader_paths[i];
+			if (m_shader_path.empty()) {
+				std::string shader_name = m_name + "_f.glsl";
+				m_shader_path = processed_cur_material_path + shader_name;
+				ogl_shader->save((cur_material_path + shader_name).c_str());
+			}
+			if (m_shader_path.empty()) {
+				std::cerr << "Failed to save fragment shader path: " << m_name << std::endl;
+			} else {
+				xml_node_fragment_shdr.append_attribute("path").set_value(m_shader_path.c_str());
+			}
 		}
 	}
 
@@ -101,8 +106,7 @@ int Material::load(const char* path) {
 					std::cerr << "Material \'" << getName() << "\'Failed to specify shader path: " << shdr_path << std::endl;
 					return -1;
 				}
-				setVertexShaderSource(abs_shdr_path.c_str());
-				m_vertex_shader_path = shdr_path;
+				addVertexShaderSource(abs_shdr_path.c_str());
 			}
 			pugi::xml_node xml_node_fragment_shader = xml_node_material.find_child_by_attribute("shader", "type", "fragment");
 			if (xml_node_fragment_shader) {
@@ -112,8 +116,7 @@ int Material::load(const char* path) {
 					std::cerr << "Material \'" << getName() << "\'Failed to specify shader path: " << shdr_path << std::endl;
 					return -1;
 				}
-				setFragmentShaderSource(abs_shdr_path.c_str());
-				m_fragment_shader_path = shdr_path;
+				addFragmentShaderSource(abs_shdr_path.c_str());
 			}
 
 			for (pugi::xml_node variable_node = xml_node_material.child("variable");
@@ -132,17 +135,23 @@ int Material::load(const char* path) {
 				texture_node;
 				texture_node = texture_node.next_sibling("texture")) {
 				const char* tex_name = texture_node.attribute("name").value();
-				const char* tex_path = texture_node.attribute("path").value();
-				std::string abs_tex_path = Utils::getAbsolutePathFromXML(tex_path);
-				if (abs_tex_path.empty()) {
-					std::cerr << "Material \'" << getName() << "\'Failed to specify texture path: " << tex_path << std::endl;
-					return -1;
-				}
-
 				Texture texture;
-				texture.load(abs_tex_path.c_str());
-				m_shader_program->setTexture(tex_name, texture);
+
+				if (!texture_node.attribute("path") || strlen(texture_node.attribute("path").value()) == 0) {
+					// todo empty tex
+				}
+				else {
+					const char* tex_path = texture_node.attribute("path").value();
+					std::string abs_tex_path = Utils::getAbsolutePathFromXML(tex_path);
+					if (abs_tex_path.empty()) {
+						std::cerr << "Material \'" << getName() << "\'Failed to specify texture path: " << tex_path << std::endl;
+						return -1;
+					}
+					texture.load(abs_tex_path.c_str());
+					m_shader_program->setTexture(tex_name, texture);
+				}
 			}
+			apply();
 
 			return 1;
 		}
@@ -192,60 +201,53 @@ int Material::getNumTextures() {
 	return m_shader_program->getNumTextures();
 }
 
-void Material::setVertexShaderSource(const char* path) {
-	// todo: save m_vertex_shader_path = "core/assets:<...>"
-	m_vertex_shader->loadSource(path);
-	m_shader_program->addShader(m_vertex_shader);
-	if (program_ready_to_link()) {
-		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
-	}
+void Material::addVertexShaderSource(const char* path) {
+	m_vec_vertex_shaders.emplace_back(new OpenGLShader(Shader::Type::VERTEX));
+	m_vec_vertex_shaders.back()->loadSource(path);
+	m_shader_program->addShader(m_vec_vertex_shaders.back());
+
+	m_vec_vertex_shader_paths.push_back(Utils::getPathXMLFromAbsolute(path));
 }
 
-void Material::setVertexShaderContents(const char* code) {
-	m_vertex_shader->loadContents(code);
-	if (program_ready_to_link()) {
-		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
-	}
+void Material::addVertexShaderContents(const char* code) {
+	m_vec_vertex_shaders.emplace_back(new OpenGLShader(Shader::Type::VERTEX));
+	m_vec_vertex_shaders.back()->loadContents(code);
+	m_shader_program->addShader(m_vec_vertex_shaders.back());
 }
 
-void Material::setFragmentShaderSource(const char* path) {
-	// todo: save m_fragment_shader_path = "core/assets:<...>"
-	m_fragment_shader->loadSource(path);
-	m_shader_program->addShader(m_fragment_shader);
-	if (program_ready_to_link()) {
-		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
-	}
+void Material::addFragmentShaderSource(const char* path) {
+	m_vec_fragment_shaders.emplace_back(new OpenGLShader(Shader::Type::FRAGMENT));
+	m_vec_fragment_shaders.back()->loadSource(path);
+	m_shader_program->addShader(m_vec_fragment_shaders.back());
+
+	m_vec_fragment_shader_paths.push_back(Utils::getPathXMLFromAbsolute(path));
 }
 
-void Material::setFragmentShaderContents(const char* code) {
-	m_fragment_shader->loadContents(code);
-	if (program_ready_to_link()) {
-		dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
-	}
-}
-
-bool Material::program_ready_to_link() {
-	OpenGLShaderProgram* ogl_shader_program = dynamic_cast<OpenGLShaderProgram*>(m_shader_program);
-	OpenGLShader* ogl_vertex_shader = dynamic_cast<OpenGLShader*>(m_vertex_shader);
-	OpenGLShader* ogl_fragment_shader = dynamic_cast<OpenGLShader*>(m_fragment_shader);
-	return ogl_shader_program->isShaderAttached(ogl_vertex_shader) && ogl_shader_program->isShaderAttached(ogl_fragment_shader);
+void Material::addFragmentShaderContents(const char* code) {
+	m_vec_fragment_shaders.emplace_back(new OpenGLShader(Shader::Type::FRAGMENT));
+	m_vec_fragment_shaders.back()->loadContents(code);
+	m_shader_program->addShader(m_vec_fragment_shaders.back());
 }
 
 void Material::initialize_shader_program_and_shaders() {
 	m_shader_program = new OpenGLShaderProgram();
-	m_vertex_shader = new OpenGLShader(Shader::Type::VERTEX);
-	m_fragment_shader = new OpenGLShader(Shader::Type::FRAGMENT);
 }
 
 void Material::remove_shader_program_and_shaders() {
-	if (m_fragment_shader) {
-		delete m_fragment_shader;
-		m_fragment_shader = nullptr;
+	while (!m_vec_fragment_shaders.empty()) {
+		Shader* shader = m_vec_fragment_shaders.back();
+		m_vec_fragment_shaders.pop_back();
+		delete shader;
+
+		m_vec_fragment_shader_paths.pop_back();
 	}
 
-	if (m_vertex_shader) {
-		delete m_vertex_shader;
-		m_vertex_shader = nullptr;
+	while (!m_vec_vertex_shaders.empty()) {
+		Shader* shader = m_vec_vertex_shaders.back();
+		m_vec_vertex_shaders.pop_back();
+		delete shader;
+
+		m_vec_vertex_shader_paths.pop_back();
 	}
 
 	if (m_shader_program) {
@@ -255,5 +257,9 @@ void Material::remove_shader_program_and_shaders() {
 }
 
 void Material::apply() {
+	dynamic_cast<OpenGLShaderProgram*>(m_shader_program)->link();
+}
+
+void Material::use() {
 	m_shader_program->use();
 }

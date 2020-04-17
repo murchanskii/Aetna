@@ -1,7 +1,3 @@
-//
-// Created by murchanskii on 27.10.2019.
-//
-
 #ifndef AETNA_MESH_H
 #define AETNA_MESH_H
 
@@ -32,8 +28,6 @@ private:
     std::vector<int> m_indices;
     std::vector<float> m_normals;
     std::vector<float> m_tex_coords;
-
-    void generate_normals(std::vector<float> &t_normals);
 };
 
 
